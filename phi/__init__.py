@@ -12,9 +12,10 @@ def create_app():
     app = Flask(__name__)
     app.config['ENV'] = 'development'
     app.config['SECRET_KEY'] = 'in-production-i-will-replace'
-    
+    app.config['DATABASE_URI'] = f'sqlite:///Phi.db'
+
     db.init_app(app)
-    
+
     from .auth import auth
     app.register_blueprint(auth)
     

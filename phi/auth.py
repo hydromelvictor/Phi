@@ -4,6 +4,7 @@ from flask import (
     Blueprint, render_template, redirect,
     url_for, request, flash
 )
+from .models import User
 
 auth = Blueprint('auth', __name__)
 
@@ -19,7 +20,8 @@ def login():
         if len(password) < 4:
             flash('password length less than 4')
             return render_template('auth/login.html')
-        # verifie si username n'est pas deja pris
+        user = User.query.filter_by(username=username).first()
+        if user and 
         
     return render_template('auth/login.html')
 
