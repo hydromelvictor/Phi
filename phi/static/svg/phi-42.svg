@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 75" height="42" width="42" >
+    <path d="M30 70L25 70 25 25 49.7 25A22.5 22.5 0 1 1 30 5L30 15 25 15 25 10A17.5 17.5 0 1 0 44.5 30L30 30Z" fill="goldenrod" stroke="goldenrod" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M40 10L35 15 40 20 45 15Z" fill="goldenrod" stroke-linecap="round" stroke-linejoin="round" stroke="goldenrod"/>
+</svg>

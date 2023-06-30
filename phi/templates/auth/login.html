@@ -1,0 +1,37 @@
+{% extends 'auth/auth.html' %}
+<!---->
+{% block img %}
+{{ url_for('static', filename='img/sign.webp') }}
+{% endblock %}
+<!---->
+{% block desc %}
+Sign into your account
+{% endblock %}
+<!---->
+{% block action %}
+/login
+{% endblock %}
+<!---->
+{% block formbody %}
+<div class="form-group">
+  <label for="email" class="sr-only">Username</label>
+  <input type="text" name="username" id="email" class="form-control" placeholder="Username">
+</div>
+<div class="form-group mb-4">
+  <label for="password" class="sr-only">Password</label>
+  <input type="password" name="password" id="password" class="form-control" placeholder="***********">
+</div>
+<input name="login" id="login" class="btn btn-block login-btn mb-4" type="button" value="Login">
+{% endblock %}
+<!---->
+{% block backof %}
+Don't have an account?
+{% endblock %}
+<!---->
+{% block baclofurl %}
+{{ url_for('auth.sign') }}
+{% endblock %}
+<!---->
+{% block backoflink %}
+Register here
+{% endblock %}

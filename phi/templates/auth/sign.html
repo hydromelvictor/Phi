@@ -1,0 +1,41 @@
+{% extends 'auth/auth.html' %}
+<!---->
+{% block img %}
+{{ url_for('static', filename='img/login.jpg') }}
+{% endblock %}
+<!---->
+{% block desc %}
+Register
+{% endblock %}
+<!---->
+{% block action %}
+/sign
+{% endblock %}
+<!---->
+{% block formbody %}
+<div class="form-group">
+  <label for="email" class="sr-only">Username</label>
+  <input type="text" name="username" id="email" class="form-control" placeholder="Username">
+</div>
+<div class="form-group">
+  <label for="email" class="sr-only">Email</label>
+  <input type="email" name="email" id="email" class="form-control" placeholder="Email address">
+</div>
+<div class="form-group mb-4">
+  <label for="password" class="sr-only">Password</label>
+  <input type="password" name="password" id="password" class="form-control" placeholder="***********">
+</div>
+<input name="login" id="login" class="btn btn-block login-btn mb-4" type="button" value="Register">
+{% endblock %}
+<!---->
+{% block backof %}
+Do you have an account?
+{% endblock %}
+<!---->
+{% block baclofurl %}
+{{ url_for('auth.login') }}
+{% endblock %}
+<!---->
+{% block backoflink %}
+Sign in
+{% endblock %}
