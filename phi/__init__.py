@@ -1,29 +1,46 @@
 #!/usr/bin/env python
 """ init app """
 from flask import Flask
+from flask_tinymce import TinyMCE
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 db = SQLAlchemy()
-
+migrate = Migrate()
 
 def create_app():
     """ create flask app """
     app = Flask(__name__)
     app.config['ENV'] = 'development'
     app.config['SECRET_KEY'] = 'in-production-i-will-replace'
-    app.config['DATABASE_URI'] = f'sqlite:///Phi.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///Phi.db'
+    app.config['UPLOADS'] = 'Phi/phi/static/uploads'
+    
+    tinymce = TinyMCE()
+    tinymce.init_app(app)
+    migrate.init_app(app, db)
 
     db.init_app(app)
 
     from .auth import auth
     app.register_blueprint(auth)
     
+    from .news import news
+    app.register_blueprint(news)
+    
+    from .profil import profile
+    app.register_blueprint(profile)
+    
+    from .chat import sms
+    app.register_blueprint(sms)
+
     manager = LoginManager()
     manager.login_view = 'auth.login'
     manager.init_app(app)
     
-    from .models import User
+    from .models import User, Post, Comment
 
     @manager.user_loader
     def load_user(user_id):

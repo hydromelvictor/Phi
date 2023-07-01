@@ -65,3 +65,5 @@ def upload_file():
 
 
 
+{{ url_for('send_uploaded_file', filename=editorial.editorial_img ) }}
+{{editorial.editorial_body|safe }}
