@@ -36,6 +36,7 @@ class User(UserMixin, db.Model):
     website = db.Column(db.String)
     password = db.Column(db.String, nullable=False)
     posts = db.relationship('Post', backref='user')
+    comments = db.relationship('Comment', backref='user')
 
     def __init__(self, **kwargs):
         """ initialisation """
@@ -76,7 +77,7 @@ class Comment(db.Model):
     id = db.Column(db.String, primary_key=True)
     author = db.Column(db.String, db.ForeignKey(User.id))
     postRef = db.Column(db.String, db.ForeignKey(Post.id))
-    contains = db.Column(db.String)
+    contains = db.Column(db.String, nullable=False)
     publish = db.Column(db.DATETIME, nullable=False, default=datetime.utcnow())
     
     def __init__(self, **kwargs):

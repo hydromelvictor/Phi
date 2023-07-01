@@ -16,10 +16,6 @@
   <!-- Vendor CSS Files -->
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/bootstrap-icons.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/boxicons.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/quill.snow.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/quill.bubble.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/remixicon.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/style-1.css') }}" rel="stylesheet">
 
   <!-- Template Main CSS File -->
@@ -208,20 +204,28 @@
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{{ url_for('static', filename='img/nouser.png') }}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">H. Victor</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{ current_user.username }}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Hydromel Victor</h6>
-              <span>Software Engineer</span>
+              <h6>
+                {% if current_user.firstname and current_user.lastname %}
+                  {{ current_user.firstname }} {{ current_user.lastname }}
+                {% else %}
+                  User-{{ current_user.id }}
+                {% endif %}
+              </h6>
+              {% if current_user.job %}
+                <span>{{ current_user.job }}</span>
+              {% endif %}
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.update') }}">
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.update', user_id=current_user.id) }}">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -231,7 +235,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.settings') }}">
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.settings', user_id=current_user.id) }}">
                 <i class="bi bi-gear"></i>
                 <span>Account Settings</span>
               </a>

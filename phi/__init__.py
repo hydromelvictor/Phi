@@ -10,13 +10,16 @@ import os
 db = SQLAlchemy()
 migrate = Migrate()
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 def create_app():
     """ create flask app """
     app = Flask(__name__)
     app.config['ENV'] = 'development'
     app.config['SECRET_KEY'] = 'in-production-i-will-replace'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///Phi.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'Phi.db')}"
     app.config['UPLOADS'] = 'Phi/phi/static/uploads'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     tinymce = TinyMCE()
     tinymce.init_app(app)

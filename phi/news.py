@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ news """
 from flask import Blueprint, render_template, request, redirect, url_for
-from .models import User, Post
+from .models import User, Post, Comment
 from flask_login import current_user, login_required
 from phi import db
 
@@ -12,7 +12,7 @@ news = Blueprint('news', __name__)
 @login_required
 def dash():
     """ news """
-    posts = db.session.execute(db.select(Post))
+    posts = Post.query.order_by(Post.publish.desc()).all()
     context = {
         'posts': posts,
         'current_user': current_user
@@ -36,11 +36,45 @@ def post():
     return render_template('post/post.html', **context)
 
 
+@news.route('/<postRef>', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def new_comments(postRef):
+    """ comment """
+    if request.method == 'POST':
+        post = Post.query.get_or_404(postRef)
+        cmt = Comment(post=post, contains=request.form.get('contains'), user=current_user)
+        db.session.add(cmt)
+        db.session.commit()
+    return render_template('news.html')
+
+
+@news.route('/comments', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def all_comments():
+    """ comment for post """
+    cmts = Comment.query.order_by(Comment.publish.asc()).all()
+    context = {
+        'cmts': cmts
+    }
+    return render_template('news.html', **context)
+
+
+@news.route('/comment/del/<cmt_id>', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def del_comments(cmt_id):
+    """ del comment """
+    cmt = Comment.query.get_or_404(cmt_id)
+    if cmt:
+        db.session.delete(cmt)
+        db.session.commit()
+    return render_template('news.html')
+    
+
 @news.route('/me/all_posts', methods=['GET'], strict_slashes=False)
 @login_required
 def alls():
     """ all posts """
-    my_all_posts = db.session.execute(db.select(Post).filter_by(id=current_user.id)).scalar()
+    my_all_posts = Post.query.filter_by()
     context = {
         'my_all_posts': my_all_posts,
         'current_user': current_user
@@ -52,7 +86,7 @@ def alls():
 @login_required
 def users():
     """ users """
-    all_users = db.session.execute(db.select(User).order_by(User.username)).scalar()
+    all_users = User.query.all()
     context = {
         'current_user': current_user,
         'all_users': all_users
