@@ -13,6 +13,7 @@ news = Blueprint('news', __name__)
 def dash():
     """ news """
     posts = Post.query.order_by(Post.publish.desc()).all()
+    
     context = {
         'posts': posts,
         'current_user': current_user
@@ -40,8 +41,8 @@ def post():
 @login_required
 def new_comments(postRef):
     """ comment """
+    post = Post.query.get_or_404(postRef)
     if request.method == 'POST':
-        post = Post.query.get_or_404(postRef)
         cmt = Comment(post=post, contains=request.form.get('contains'), user=current_user)
         db.session.add(cmt)
         db.session.commit()

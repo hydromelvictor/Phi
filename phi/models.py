@@ -10,8 +10,7 @@ from flask_login import UserMixin
 class User(UserMixin, db.Model):
     """ user models """
     id = db.Column(db.String, primary_key=True)
-    img_me = db.column(db.String)
-    baniere = db.Column(db.String)
+    img = db.Column(db.String, nullable=False, default='img/nouser.png')
     username = db.Column(db.String(32), unique=True)
     bio = db.Column(db.Text(500))
     joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
@@ -54,12 +53,31 @@ class User(UserMixin, db.Model):
     def theObbies():
         """ obbies list """
         return self.obbies.split(',')
+    
+    @property
+    def posts(self):
+        """ all posts for user """
+        all_posts = []
+        for post in Post.query.all():
+            if post.author == self.id:
+                all_posts.append(post)
+        return all_posts
+    
+    @property
+    def comments(self):
+        """ all comments """
+        all_cmts = []
+        for cmt in Comment.query.all():
+            if cmt.author == self.id:
+                all_cmts.append(cmt)
+        return all_cmts
+        
 
 
 class Post(db.Model):
     """ post models """
     id = db.Column(db.String, primary_key=True)
-    author = db.Column(db.String, db.ForeignKey(User.id))
+    author = db.Column(db.String, db.ForeignKey(User.id), nullable=False)
     content = db.Column(db.Text, nullable=False)
     publish = db.Column(db.DATETIME, nullable=False, default=datetime.utcnow())
     comments = db.relationship('Comment', backref='post')
@@ -70,13 +88,31 @@ class Post(db.Model):
                 setattr(self, key, val)
         self.publish = datetime.utcnow()
         self.id = str(uuid4())
+    
+    @property
+    def user_author(self):
+        """ user author """
+        return User.query.filter_by(id=self.author)
+    
+    def __str__(self):
+        """ string representation """
+        return f"{self.author}:{self.content[:30]}..."
+    
+    @property
+    def comments(self):
+        """ all comments for posts """
+        all_cmts = []
+        for cmt in Comment.query.all():
+            if cmt.postRef == self.id:
+                all_cmts.append(cmt)
+        return all_cmts
 
 
 class Comment(db.Model):
     """ comments model """
     id = db.Column(db.String, primary_key=True)
-    author = db.Column(db.String, db.ForeignKey(User.id))
-    postRef = db.Column(db.String, db.ForeignKey(Post.id))
+    author = db.Column(db.String, db.ForeignKey(User.id), nullable=False)
+    postRef = db.Column(db.String, db.ForeignKey(Post.id), nullable=False)
     contains = db.Column(db.String, nullable=False)
     publish = db.Column(db.DATETIME, nullable=False, default=datetime.utcnow())
     
@@ -86,3 +122,8 @@ class Comment(db.Model):
                 setattr(self, key, val)
         self.publish = datetime.utcnow()
         self.id = str(uuid4())
+        
+    @property
+    def user_cmt(self):
+        """ user comment """
+        return User.query.get_or_404(self.author)

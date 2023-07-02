@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 <!---->
 {% block search %}
-/
+
 {% endblock %}
 <!---->
 {% block basebody %}
@@ -11,8 +11,8 @@
     {% for post in posts %}
     <div class="card-body">
       <div class="card-title">
-        <img src="{{ url_for('static', filename='img/nouser.png') }}" alt="" width="45em" class="rounded-circle">
-        <span>Username</span>
+        <img src="{{ url_for('static', filename=post.user_author.img) }}" alt="" width="45em" class="rounded-circle">
+        <span>{{ post.user_author.username }} - {{ post.publish }}</span>
       </div>
       <div>{{ post.content }}</div>
       <br>
@@ -23,7 +23,7 @@
           </a>
           <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-chat-left-text"></i>
-            <span class="badge bg-success badge-number">7</span>
+            <span class="badge bg-success badge-number">{{ len(post.comments) }}</span>
           </a>
       </div><br>
       <form action="" method="post">
@@ -44,20 +44,22 @@
           </h2>
           <div id="collapseOne" class="accordion-collapse collapse hidden" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-                  <div class="card container">
-                    <span class="card-title">
-                      <img src="{{ url_for('static', filename='img/nouser.png') }}" alt="" width="35em" class="rounded-circle">
-                      <span>Username</span>
-                    </span>
-                    <span>
-                      your messages...
-                    </span><br>
-                  </div>
+              {% for cmt in post.comments %}
+                <div class="card container">
+                  <span class="card-title">
+                    <img src="{{ url_for('static', filename=cmt.user_cmt.img) }}" alt="" width="35em" class="rounded-circle">
+                    <span>{{ cmt.uer_cmt.username }} - {{ cmt.publish }}</span>
+                  </span>
+                  <span>
+                    {{ cmt.contains }}
+                  </span><br>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
       </div><!-- End Default Accordion Example -->
-      {% endfor %}
+    {% endfor %}
   </div>
 </div>
 {% endblock %}

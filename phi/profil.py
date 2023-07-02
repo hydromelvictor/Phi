@@ -3,6 +3,7 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required, current_user
 from .models import User
+import os
 
 profile = Blueprint('profile', __name__)
 
@@ -17,13 +18,20 @@ def same():
     return render_template('profil/same.html')
 
 
-@profile.route('/<user_id>/profil', methods=['GET', 'POST'], strict_slashes=False)
+@profile.route('/me/profil/overview', methods=['GET'], strict_slashes=False)
+def overview():
+    """ overviews """
+    context = {
+        'current_user': current_user
+    }
+    return render_template('profil/update.html', **context)
+
+@profile.route('/me/profil', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
-def update(user_id):
+def update():
     """ profil update """
-    file = 'Phi/jobs.csv'
     jobs = []
-    with open(file, 'r') as file:
+    with open(os.path.abspath('jobs.csv'), 'r') as file:
         ls = file.readlines()
         for l in ls:
             jobs.append(l.split('-')[0])
