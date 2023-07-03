@@ -12,66 +12,68 @@
         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
             <img src="{{ url_for('profile.upload', filename=person.img) }}" alt="Profile" class="rounded-circle" width="150em"><br>
-            {% if not setting.hidden_fullname %}
+            {% if not setting.hidden_fullname and person.firstname|length > 1 and person.lastname|length > 1 %}
             <h3>{{ person.firstname }} {{ person.lastname }}</h3>
             {% endif %}
-            {% if not setting.hidden_job %}
+            {% if not setting.hidden_job and person.job|length > 1 %}
             <h4>{{ person.job }}</h4>
             {% endif %}
 
             <span>Joined at {{ person.joined }}</span>
-            <div>
+            <div class="container justify-content-start">
+              {% if person.bio|length > 1 %}
               <h5 class="card-title">Bio</h5>
-              <p class="small fst-italic">{{ current_user.bio }}</p>
+              <p class="small fst-italic">{{ person.bio }}</p>
+              {% endif %}
 
               <h5 class="card-title">Profile Details</h5>
 
-              {% if not setting.hidden_society %}
+              {% if not setting.hidden_society and person.society|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">Company</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.society }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.society }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_status %}
+              {% if not setting.hidden_status and person.status|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">professional status</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.status }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.status }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_country %}
+              {% if not setting.hidden_country and person.country|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">Country</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.country }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.country }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_city %}
+              {% if not setting.hidden_city and person.city|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">City</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.city }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.city }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_phone %}
+              {% if not setting.hidden_phone and person.phone|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">Phone</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.phone }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.phone }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_email %}
+              {% if not setting.hidden_email and person.email|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">Email</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.email }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.email }}</div>
               </div>
               {% endif %}
 
-              {% if not setting.hidden_obbies %}
+              {% if not setting.hidden_obbies and person.obbies|length > 1 %}
               <div class="row">
                 <div class="col-lg-3 col-md-4 label fw-bold">Obbies</div>
-                <div class="col-lg-9 col-md-8">{{ current_user.obbies }}</div>
+                <div class="col-lg-9 col-md-8">{{ person.obbies }}</div>
               </div>
               {% endif %}
               <br><br>
@@ -79,13 +81,33 @@
 
             {% if not setting.hidden_social %}
             <div class="social-links mt-2">
+              {% if person.twitter|length > 1 %}
               <a href="{{ person.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
+              {% endif %}
+              
+              {% if person.faceook|length > 1 %}
               <a href="{{ person.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+              {% endif %}
+              
+              {% if person.instagram|length > 1 %}
               <a href="{{ person.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+              {% endif %}
+              
+              {% if person.linkedin|length > 1 %}
               <a href="{{ person.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              {% endif %}
+              
+              {% if person.github|length > 1 %}
               <a href="{{ person.github }}" class="github"><i class="bi bi-github"></i></a>
+              {% endif %}
+              
+              {% if person.cv|length > 1 %}
               <a href="{{ person.cv }}" class="file"><i class="bi  bi-file-earmark-person"></i></a>
+              {% endif %}
+              
+              {% if person.website|length > 1 %}
               <a href="{{ person.website }}" class="globe"><i class="bi bi-globe"></i></a>
+              {% endif %}
             </div>
             {% endif %}
           </div>

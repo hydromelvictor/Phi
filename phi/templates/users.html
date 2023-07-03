@@ -9,7 +9,7 @@
   {% for user in all_users %}
   <div class="icon">
     <img src="{{ url_for('profile.upload', filename=user.img) }}" alt="user" class="rounded-circle" width="75em"><br>
-    <a class="nav-link collapsed label" href="{{ url_for('profile.view', username=user.username) }}">{{ user.username }}</a>
+    <a class="nav-link collapsed label" href="{{ url_for('profile.public', username=user.username) }}">{{ user.username }}</a>
   </div>
   {% endfor %}
 </div>

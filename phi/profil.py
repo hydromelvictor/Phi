@@ -25,6 +25,7 @@ profile = Blueprint('profile', __name__)
 @login_required
 def overview():
     """ overviews """
+    settings = Settings.query.filter_by(person=current_user.id).first()
     posts = Post.query.filter_by(author=current_user.id).order_by(Post.publish)
     context = {
         'current_user': current_user,
@@ -75,6 +76,7 @@ def update():
         
         db.session.commit()
         return redirect(url_for('profile.overview'))
+    
     context = {
         'current_user': current_user,
         'country': states,
@@ -152,8 +154,7 @@ def pwd():
         else:
             flash('password incorrect !!!')
     context = {
-        'current_user': current_user,
-        'settings':settings
+        'current_user': current_user
     }
     return render_template('profil/update.html', **context)
 
@@ -186,8 +187,7 @@ def rm():
             db.session.commit()
             return redirect(url_for('auth.sign'))
     context = {
-        'current_user': current_user,
-        'settings':settings
+        'current_user': current_user
     }
     return render_template('profil/update.html', **context)
 

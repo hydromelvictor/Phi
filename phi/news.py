@@ -24,6 +24,7 @@ def dash():
             cmts.append({'cmt': cmt, 'auth': auth})
 
         news.append({'post': post, 'author': author, 'cmts': cmts})
+
     context = {
         'news': news,
         'current_user': current_user
@@ -59,15 +60,15 @@ def new_comments(postRef):
     return render_template('news.html')
 
 
-@news.route('/comments', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def all_comments():
-    """ comment for post """
-    cmts = Comment.query.order_by(Comment.publish.asc()).all()
-    context = {
-        'cmts': cmts
-    }
-    return render_template('news.html', **context)
+# @news.route('/comments', methods=['GET', 'POST'], strict_slashes=False)
+# @login_required
+# def all_comments():
+#     """ comment for post """
+#     cmts = Comment.query.order_by(Comment.publish.asc()).all()
+#     context = {
+#         'cmts': cmts
+#     }
+#     return render_template('news.html', **context)
 
 
 @news.route('/comment/del/<cmt_id>', methods=['GET', 'POST'], strict_slashes=False)
@@ -85,9 +86,9 @@ def del_comments(cmt_id):
 @login_required
 def alls():
     """ all posts """
-    my_all_posts = Post.query.filter_by()
+    my_posts = Post.query.filter_by(author=current_user.id).order_by(Post.publish)
     context = {
-        'my_all_posts': my_all_posts,
+        'my_posts': my_posts,
         'current_user': current_user
     }
     return render_template('post/all.html', **context)
