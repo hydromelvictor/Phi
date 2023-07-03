@@ -51,6 +51,10 @@
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
           </li>
 
+          <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#account-remove">Account remove</button>
+          </li>
+
         </ul>
         <div class="tab-content pt-2">
 
@@ -93,7 +97,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-4 label">Obbies</div>
                 <div class="col-lg-9 col-md-8">{{ current_user.obbies }}</div>
-            </div>
+            </div><br><br>
 
           </div>
 
@@ -105,7 +109,7 @@
                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                 <div class="col-md-8 col-lg-9">
                   <div class="pt-2">
-                    <input name="img" class="form-control" type="file" id="formFile">
+                    <input name="img" class="form-control" type="file" id="formFile" value="{{ current_user.img }}">
                   </div>
                 </div>
               </div>
@@ -258,10 +262,90 @@
           <div class="tab-pane fade pt-3" id="profile-settings">
 
             <!-- Settings Form -->
-            <form>
+            <form action="/me/settings", method="post">
 
               <div class="row mb-3">
-                <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Profil</label>
+                <div class="col-md-8 col-lg-9">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="fullnane" name="hidden_fullname">
+                    <label class="form-check-label" for="proOffers">
+                      hidden firstname and lastname
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="email" name="hidden_email" {% if settings.hidden_email %} checked {% endif %}>
+                    <label class="form-check-label" for="proOffers">
+                      hidden email
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="country" name="hidden_country">
+                    <label class="form-check-label" for="proOffers">
+                      hidden your country
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="city" name="hidden_city">
+                    <label class="form-check-label" for="proOffers">
+                      hidden city
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="job" name="hidden_job">
+                    <label class="form-check-label" for="proOffers">
+                      hidden job
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="status" name="hidden_status">
+                    <label class="form-check-label" for="proOffers">
+                      hidden professional status
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="society" name="hidden_society">
+                    <label class="form-check-label" for="proOffers">
+                      hidden company
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="phone" name="hidden_phone">
+                    <label class="form-check-label" for="proOffers">
+                      hidden phone
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="obbies" name="hidden_obbies">
+                    <label class="form-check-label" for="proOffers">
+                      hidden obbies
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="cv" name="hidden_cv">
+                    <label class="form-check-label" for="proOffers">
+                      hidden CV
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="social" name="hidden_social">
+                    <label class="form-check-label" for="proOffers">
+                      hidden social networks
+                    </label>
+                  </div>
+                  <br>
+                </div>
+                
+                <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Profil</label>
+                <div class="col-md-8 col-lg-9">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="comment" name="comment_disable">
+                    <label class="form-check-label" for="proOffers">
+                      disable comments in your posts
+                    </label>
+                  </div>
+                </div>
+                <!--label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
                 <div class="col-md-8 col-lg-9">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="changesMade" checked>
@@ -287,7 +371,7 @@
                       Security alerts
                     </label>
                   </div>
-                </div>
+                </div-->
               </div>
 
               <div class="text-center">
@@ -334,6 +418,21 @@
               </div>
             </form><!-- End Change Password Form -->
 
+          </div>
+
+          <div class="tab-pane fade pt-3" id="account-remove">
+            <form action="/me/profil/rm" method="post">
+              <br>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="proOffers" name="yes">
+                <label class="form-check-label" for="proOffers">
+                  are you sure ?
+                </label>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Remove account</button>
+                </div>
+              </div>
+            </form>
           </div>
 
         </div><!-- End Bordered Tabs -->

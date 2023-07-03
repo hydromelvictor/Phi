@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+<!---->
+{% block search %}
+
+{% endblock %}
+<!---->
+{% block basebody %}
+<div class="col-lg-6 container justify-content-center">
+
+    <div class="card">
+      <div class="card-body">
+        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+            <img src="{{ url_for('profile.upload', filename=person.img) }}" alt="Profile" class="rounded-circle" width="150em"><br>
+            {% if not setting.hidden_fullname %}
+            <h3>{{ person.firstname }} {{ person.lastname }}</h3>
+            {% endif %}
+            {% if not setting.hidden_job %}
+            <h4>{{ person.job }}</h4>
+            {% endif %}
+
+            <span>Joined at {{ person.joined }}</span>
+            <div>
+              <h5 class="card-title">Bio</h5>
+              <p class="small fst-italic">{{ current_user.bio }}</p>
+
+              <h5 class="card-title">Profile Details</h5>
+
+              {% if not setting.hidden_society %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">Company</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.society }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_status %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">professional status</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.status }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_country %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">Country</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.country }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_city %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">City</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.city }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_phone %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">Phone</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.phone }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_email %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">Email</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.email }}</div>
+              </div>
+              {% endif %}
+
+              {% if not setting.hidden_obbies %}
+              <div class="row">
+                <div class="col-lg-3 col-md-4 label fw-bold">Obbies</div>
+                <div class="col-lg-9 col-md-8">{{ current_user.obbies }}</div>
+              </div>
+              {% endif %}
+              <br><br>
+            </div>
+
+            {% if not setting.hidden_social %}
+            <div class="social-links mt-2">
+              <a href="{{ person.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
+              <a href="{{ person.facebook }}" class="facebook"><i class="bi bi-facebook"></i></a>
+              <a href="{{ person.instagram }}" class="instagram"><i class="bi bi-instagram"></i></a>
+              <a href="{{ person.linkedin }}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              <a href="{{ person.github }}" class="github"><i class="bi bi-github"></i></a>
+              <a href="{{ person.cv }}" class="file"><i class="bi  bi-file-earmark-person"></i></a>
+              <a href="{{ person.website }}" class="globe"><i class="bi bi-globe"></i></a>
+            </div>
+            {% endif %}
+          </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

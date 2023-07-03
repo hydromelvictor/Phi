@@ -12,7 +12,7 @@
     <div class="card-body">
       <div class="card-title">
         <img src="{{ url_for('profile.upload', filename=new.author.img) }}" alt="" width="45em" class="rounded-circle">
-        <span><a href="">{{ new.author.username }}</a> - {{ new.post.publish }}</span>
+        <span><a href="{{ url_for('profile.public', username=new.author.username) }}">{{ new.author.username }}</a> - {{ new.post.publish }}</span>
       </div>
       <div>{{ new.post.content|safe }}</div>
       <br>
@@ -23,7 +23,7 @@
           </a>
           <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-chat-left-text"></i>
-            <span class="badge bg-success badge-number">7</span>
+            <span class="badge bg-success badge-number">{{ new.cmts|length }}</span>
           </a>
       </div><br>
       <form action="" method="post">
