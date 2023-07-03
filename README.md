@@ -21,3 +21,11 @@ this adventure to Phi is a composition of three backend engineers:
   * [phi](../Phi)
     * [static](./phi/static)
     * [templates](./phi/templates)
+
+## Register
+
+![](./phi/static/img/Capture.PNG)
+
+## Login
+
+![](./phi/static/img/Capture1.PNG)
