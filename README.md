@@ -10,7 +10,7 @@ this adventure to Phi is a composition of three backend engineers:
 | full names | github link | linkedin link | twitter link | stackoverflow link |
 | :---------:| :----------:| :------------:| :-----------:| :-----------------:|
 | Hydromel Victor Doledji | [*harkinder-dark*](github.com/harkinder-dark) | [*hydromel*](https://www.linkedin.com/in/hydromel/) | [*WarningCode*r](https://twitter.com/WarningCode) | [*hydromel*](https://stackoverflow.com/users/20591064/hydromel) |
-| Caren Kathambi | [*github*]() | [*linkedIn*]() | [*Twitter*]() | [*StackOverflow*]() |
+| Caren Kathambi | [*CaraNerac*](github.com/CaraNerac) | [*Cara Nerac*](https://www.linkedin.com//in//Cara Nerac) | [*Twitter*]() | [*StackOverflow*]() |
 | Timo kamau | [*github*]() | [*linkedIn*]() | [*Twitter*]() | [*StackOverflow*]() |
 
 ## ![Phi](./phi/static/svg/phi-32.svg)[**visit our site**]()
