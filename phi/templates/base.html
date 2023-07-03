@@ -203,7 +203,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="{{ url_for('static', filename=current_user.img) }}" alt="Profile" class="rounded-circle">
+            <img src="{{ url_for('profile.upload', filename=current_user.img) }}" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">{{ current_user.username }}</span>
           </a><!-- End Profile Iamge Icon -->
 
@@ -225,7 +225,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.update') }}">
+              <a class="dropdown-item d-flex align-items-center" href="{{ url_for('profile.overview') }}">
                 <i class="bi bi-person"></i>
                 <span>My Profile</span>
               </a>
@@ -298,9 +298,9 @@
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url_for('profile.same') }}">
-          <i class="bi bi-person-check"></i>
-          <span>Same Profil</span>
+        <a class="nav-link collapsed" href="{{ url_for('sms.msg') }}">
+          <i class="bi bi-chat-dots"></i>
+          <span>Group chat</span>
         </a>
       </li><!-- End F.A.Q Page Nav -->
 

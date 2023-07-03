@@ -10,29 +10,29 @@ from flask_login import UserMixin
 class User(UserMixin, db.Model):
     """ user models """
     id = db.Column(db.String, primary_key=True)
-    img = db.Column(db.String, nullable=False, default='img/nouser.png')
+    img = db.Column(db.String, nullable=False, default='nouser.png')
     username = db.Column(db.String(32), unique=True)
-    bio = db.Column(db.Text(500))
+    bio = db.Column(db.Text(500), default='')
     joined = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
-    firstname = db.Column(db.String(24))
-    lastname = db.Column(db.String(64))
+    firstname = db.Column(db.String(24), default='')
+    lastname = db.Column(db.String(64), default='')
     email = db.Column(db.String)
-    country = db.Column(db.String)
-    city = db.Column(db.String)
-    job = db.Column(db.String(32))
+    country = db.Column(db.String, default='')
+    city = db.Column(db.String, default='')
+    job = db.Column(db.String(32), default='')
     # employer ou  chomeur
-    status = db.Column(db.String)
+    status = db.Column(db.String, default='')
     # if employment
-    society = db.Column(db.String)
-    phone = db.Column(db.String)
-    obbies = db.Column(db.String(501))
-    cv = db.Column(db.String)
-    instagram = db.Column(db.String)
-    facebook = db.Column(db.String)
-    github = db.Column(db.String)
-    linkedin = db.Column(db.String)
-    twitter = db.Column(db.String)
-    website = db.Column(db.String)
+    society = db.Column(db.String, default='')
+    phone = db.Column(db.String, default='')
+    obbies = db.Column(db.String(501), default='')
+    cv = db.Column(db.String, default='')
+    instagram = db.Column(db.String, default='')
+    facebook = db.Column(db.String, default='')
+    github = db.Column(db.String, default='')
+    linkedin = db.Column(db.String, default='')
+    twitter = db.Column(db.String, default='')
+    website = db.Column(db.String, default='')
     password = db.Column(db.String, nullable=False)
     posts = db.relationship('Post', backref='user')
     comments = db.relationship('Comment', backref='user')
@@ -72,7 +72,6 @@ class User(UserMixin, db.Model):
                 all_cmts.append(cmt)
         return all_cmts
         
-
 
 class Post(db.Model):
     """ post models """

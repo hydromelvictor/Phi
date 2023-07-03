@@ -13,9 +13,19 @@ news = Blueprint('news', __name__)
 def dash():
     """ news """
     posts = Post.query.order_by(Post.publish.desc()).all()
-    
+    news = []
+    for post in posts:
+        author = User.query.get_or_404(post.author)
+        comments = post.comments
+
+        cmts = []
+        for cmt in comments:
+            auth = User.query.get_or_404(cmt.author)
+            cmts.append({'cmt': cmt, 'auth': auth})
+
+        news.append({'post': post, 'author': author, 'cmts': cmts})
     context = {
-        'posts': posts,
+        'news': news,
         'current_user': current_user
     }
     return render_template('news.html', **context)
@@ -83,7 +93,7 @@ def alls():
     return render_template('post/all.html', **context)
 
 
-@news.route('/me/all_posts', methods=['GET'], strict_slashes=False)
+@news.route('/me/users', methods=['GET'], strict_slashes=False)
 @login_required
 def users():
     """ users """

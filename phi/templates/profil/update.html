@@ -10,9 +10,9 @@
     <div class="card">
       <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-        <img src="{{ url_for('static', filename=current_user.img) }}" alt="Profile" class="rounded-circle" width="150em">
-        <h2>{{ current_user.firstname }} {{ current_user.lastname }}</h2>
-        <h3>{{ current_user.job }}</h3>
+        <img src="{{ url_for('profile.upload', filename=current_user.img) }}" alt="Profile" class="rounded-circle" width="150em"><br>
+        <h3>{{ current_user.firstname }} {{ current_user.lastname }}</h3>
+        <h4>{{ current_user.job }}</h4>
         <span>Joined at {{ current_user.joined }}</span>
         <div class="social-links mt-2">
           <a href="{{ current_user.twitter }}" class="twitter"><i class="bi bi-twitter"></i></a>
@@ -100,14 +100,12 @@
           <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
             <!-- Profile Edit Form -->
-            <form>
+            <form action="/me/profil/update" method="post" enctype="multipart/form-data" >
               <div class="row mb-3">
                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                 <div class="col-md-8 col-lg-9">
-                  <img src="{{ url_for('static', filename=current_user.img) }}" alt="Profile" class="rounded-circle" width="150em">
                   <div class="pt-2">
-                    <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                    <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                    <input name="img" class="form-control" type="file" id="formFile">
                   </div>
                 </div>
               </div>
@@ -150,7 +148,12 @@
               <div class="row mb-3">
                 <label for="Country" class="col-md-4 col-lg-3 col-form-label">Country</label>
                 <div class="col-md-8 col-lg-9">
-                  <input name="country" type="text" class="form-control" id="Country" value="{{ current_user.country }}">
+                  <select class="form-select" aria-label="Default select example" name="country">
+                    <option selected>Open this select country</option>
+                    {% for ui in country %}
+                    <option value="{{ ui }}">{{ ui }}</option>
+                    {% endfor %}
+                  </select>
                 </div>
               </div>
 
@@ -192,7 +195,7 @@
               <div class="row mb-3">
                 <label for="about" class="col-md-4 col-lg-3 col-form-label">Obbies (separed value by coma (,))</label>
                 <div class="col-md-8 col-lg-9">
-                  <textarea name="bio" class="form-control" id="about" style="height: 100px">{{ current_user.obbies }}</textarea>
+                  <textarea name="obbies" class="form-control" id="about" style="height: 100px">{{ current_user.obbies }}</textarea>
                 </div>
               </div>
 
@@ -296,7 +299,14 @@
 
           <div class="tab-pane fade pt-3" id="profile-change-password">
             <!-- Change Password Form -->
-            <form>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <div class="alert alert-danger">
+                    {{ messages[0] }}
+                  </div>
+                {% endif %}
+            {% endwith %}
+            <form action="/me/pwd" method="post">
 
               <div class="row mb-3">
                 <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
