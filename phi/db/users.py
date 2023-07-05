@@ -87,7 +87,7 @@ def user_save(
         'status' : status,
         'company': company,
         'phone': phone,
-        'obbies': obbies.split(','),
+        'obbies': obbies,
         'cv': cv,
         'instagram': instagram,
         'facebook': facebook,

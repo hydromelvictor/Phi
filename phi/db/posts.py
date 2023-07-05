@@ -21,4 +21,3 @@ def post_save(author, contains):
 def post_cmts(post_id):
     """ post comment """
     return list(comments.find({'postref': post_id}))
-

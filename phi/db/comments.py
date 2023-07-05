@@ -14,4 +14,3 @@ def save_cmts(author, contains, postRef):
         'contains': contains,
         'publish': datetime.utcnow()
     })
-

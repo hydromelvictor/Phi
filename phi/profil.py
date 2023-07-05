@@ -78,6 +78,7 @@ def update():
         users.update_one(
             user,
             {"$set": {
+                'img': current_user.img,
                 'username': current_user.username,
                 'bio': current_user.bio,
                 'firstname': current_user.firstname,

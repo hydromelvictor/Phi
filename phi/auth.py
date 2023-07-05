@@ -34,12 +34,16 @@ def login():
             return render_template('auth/login.html', **context)
 
         user = users.find_one({'username': username})
-        user = get_user(user['_id'])
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('news.dash'))
+        if user:
+            user = get_user(user['_id'])
+            
+            if user.check_password(password):
+                login_user(user)
+                return redirect(url_for('news.dash'))
+            else:
+                flash('Password invalid')
         else:
-            flash('Username or password invalid')
+            flash("Username does\'nt exists")
     return render_template('auth/login.html', **context)
 
 
@@ -66,14 +70,14 @@ def sign():
         if user:
             flash(f'sorry {username} exists !!!')
             return render_template('auth/sign.html', **context)
+        
+        if '@' not in email and len(email) < 1:
+            flash('bad email')
+            return render_template('auth/sign.html', **context)
 
         user = users.find_one({'email': email})
         if user:
             flash(f'sorry {email} exists !!!')
-            return render_template('auth/sign.html', **context)
-        
-        if '@' not in email and len(email) < 1:
-            flash('bad email')
             return render_template('auth/sign.html', **context)
         
         user_save(username=username, password=password, email=email)
@@ -87,4 +91,3 @@ def logout():
     """ logout """
     logout_user()
     return redirect(url_for('auth.login'))
-    
