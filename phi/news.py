@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 from .db import users, posts, settings
 from .db.posts import post_cmts, post_save
-from .db.users import post_sender
+from .db.users import post_sender, persons
 from .db.comments import save_cmts
 from datetime import datetime
 import pymongo
@@ -17,7 +17,6 @@ news = Blueprint('news', __name__)
 def dash():
     """ news """
     allposts = posts.find().sort('publish', pymongo.DESCENDING)
-    hide = False
     news = []
     for post in allposts:
         author = post_sender(post['author'])
@@ -79,18 +78,18 @@ def post():
 def new_comments():
     """ comment """
 
-    context = {
-        'current_user': current_user
-    }
-    
     if request.method == 'POST':
         postRef = request.form.get('postRef')
         post = post_sender({'_id': postRef})
         contains = request.form.get('contains')
-        if post and len(contains) > 1:
+        if post:
             save_cmts({'author': current_user._id, 'postref': postRef, 'contains': contains})
             return redirect(url_for('news.dash'))
         return redirect(url_for('news.dash'))
+    
+    context = {
+        'current_user': current_user
+    }
     return render_template('news.html', **context)
 
 
@@ -110,9 +109,8 @@ def alls():
 @login_required
 def all_users():
     """ users """
-    all_users = users.find().sort('username', pymongo.DESCENDING)
     context = {
         'current_user': current_user,
-        'all_users': all_users
+        'all_users': persons()
     }
-    return render_template('users.html')
+    return render_template('users.html', **context)

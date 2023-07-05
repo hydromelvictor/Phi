@@ -15,7 +15,7 @@
         <img src="{{ url_for('profile.upload', filename=current_user.img) }}" alt="" width="45em" class="rounded-circle">
         <span><a href="{{ url_for('profile.public', username=current_user.username) }}">{{ current_user.username }}</a> - {{ one.publish }}</span>
       </div>
-      <div class="row">{{ one.content|safe }}</div>
+      <div class="row" style="width: 100%; overflow-x:auto">{{ one.contains|safe }}</div>
     </div><hr>
     {% endfor %}
   </div>

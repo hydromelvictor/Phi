@@ -33,7 +33,7 @@
             </button>
           </form>
       </div><br>
-      {% if not new.hide.comment_disable %}
+      {% if not new.hide.cmtDisable %}
       <form action="/post/comment" method="post">
         <input type="text" name="postRef" value="{{ new.post._id }}" hidden>
         <div class="form-floating mb-3">
@@ -53,14 +53,14 @@
           </h2>
           <div id="collapseOne" class="accordion-collapse collapse hidden" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-              {% for cmt in new.cmts %}
+              {% for cmts in new.cmts %}
                 <div class="card container">
                   <span class="card-title">
                     <img src="{{ url_for('profile.upload', filename=cmt.auth.img) }}" alt="" width="35em" class="rounded-circle">
-                    <span><a href="">{{ cmt.auth.username }}</a> - {{ cmt.cmt.publish }}</span>
+                    <span><a href="">{{ cmts.auth.username }}</a> - {{ cmts.cmt.publish }}</span>
                   </span>
                   <span>
-                    {{ cmt.cmt.contains }}
+                    {{ cmts.cmt.contains }}
                   </span><br>
                 </div>
               {% endfor %}

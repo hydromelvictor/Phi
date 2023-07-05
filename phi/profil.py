@@ -14,9 +14,9 @@ from werkzeug.security import (
 )
 from . import app
 from .const import states
-from.db import posts, users, comments
-from .db.users import get_user, user_params
-from .db.settings import settings_save
+from .db import posts, comments
+from .db.users import get_user, user_params, users
+from .db.settings import settings_save, settings
 
 import os
 
@@ -220,7 +220,7 @@ def rm():
 def public(username):
     """ public profil """
     person = users.find_one({'username': username})
-    params = settings.find_one({'person': person['_id']})
+    params = user_params(person['_id'])
     context = {
         'person': person,
         'setting': params

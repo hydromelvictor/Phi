@@ -292,18 +292,26 @@
       <li class="nav-heading">sms</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url_for('sms.chat') }}">
-          <i class="bi bi-chat-left-dots"></i>
-          <span>Chat</span>
+        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Chat</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-      </li><!-- End Profile Page Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url_for('sms.msg') }}">
-          <i class="bi bi-chat-dots"></i>
-          <span>Group chat</span>
-        </a>
-      </li><!-- End F.A.Q Page Nav -->
+        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <style>
+            .lik:hover {
+              background-color: lightgray;
+              border-radius: 7px;
+            }
+          </style>
+          {% for i in range(10) %}
+          <li class="lik">
+            <a href="{{ url_for('sms.chat') }}">
+              <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="40em">
+              <span style="margin-left: 1em;">user - 1</span>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </li><!-- End Tables Nav -->
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{ url_for('news.all_users') }}">

@@ -117,6 +117,11 @@ def post_sender(sender_id):
     return users.find_one({'_id': sender_id})
 
 
+def persons():
+    """ all users """
+    return users.find()
+
+
 def user_params(user_id):
     """ parameters """
     return settings.find_one({'person': user_id})
