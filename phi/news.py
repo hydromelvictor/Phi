@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """ news """
 from flask import Blueprint, render_template, request, redirect, url_for
-from .models import User, Post, Comment
 from flask_login import current_user, login_required
-from phi import db
+from .db import users, posts, settings
+from .db.posts import post_cmts, post_save
+from .db.users import post_sender
+from .db.comments import save_cmts
+from datetime import datetime
+import pymongo
 
 news = Blueprint('news', __name__)
 
@@ -12,18 +16,20 @@ news = Blueprint('news', __name__)
 @login_required
 def dash():
     """ news """
-    posts = Post.query.order_by(Post.publish.desc()).all()
+    allposts = posts.find().sort('publish', pymongo.DESCENDING)
+    hide = False
     news = []
-    for post in posts:
-        author = User.query.get_or_404(post.author)
-        comments = post.comments
-
+    for post in allposts:
+        author = post_sender(post['author'])
+        
         cmts = []
-        for cmt in comments:
-            auth = User.query.get_or_404(cmt.author)
+        for cmt in post_cmts(post['_id']):
+            auth = users.find_one({'_id': cmt['author']})
             cmts.append({'cmt': cmt, 'auth': auth})
 
-        news.append({'post': post, 'author': author, 'cmts': cmts})
+        hide = settings.find_one({'person': author['_id']})
+
+        news.append({'post': post, 'author': author, 'cmts': cmts, 'hide': hide})
 
     context = {
         'news': news,
@@ -40,53 +46,59 @@ def post():
         'current_user': current_user
     }
     if request.method == 'POST':
-        content = request.form.get('tinymce')
-        new_post = Post(author=current_user.id, content=content)
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for('news.dash'))
+        contains = request.form.get('tinymce')
+        if len(contains) != 0 and contains != '':
+            post_save(author=current_user._id, contains=contains)
+            return redirect(url_for('news.dash'))
     return render_template('post/post.html', **context)
 
 
-@news.route('/<postRef>', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def new_comments(postRef):
-    """ comment """
-    post = Post.query.get_or_404(postRef)
-    if request.method == 'POST':
-        cmt = Comment(post=post, contains=request.form.get('contains'), user=current_user)
-        db.session.add(cmt)
-        db.session.commit()
-    return render_template('news.html')
-
-
-# @news.route('/comments', methods=['GET', 'POST'], strict_slashes=False)
+# @news.route('/me/repost', methods=['GET', 'POST'], strict_slashes=False)
 # @login_required
-# def all_comments():
-#     """ comment for post """
-#     cmts = Comment.query.order_by(Comment.publish.asc()).all()
-#     context = {
-#         'cmts': cmts
-#     }
-#     return render_template('news.html', **context)
-
-
-@news.route('/comment/del/<cmt_id>', methods=['GET', 'POST'], strict_slashes=False)
-@login_required
-def del_comments(cmt_id):
-    """ del comment """
-    cmt = Comment.query.get_or_404(cmt_id)
-    if cmt:
-        db.session.delete(cmt)
-        db.session.commit()
-    return render_template('news.html')
+# def repost():
+#     """ repost """
     
+#     context = {
+#         'current_user': current_user
+#     }
+    
+#     if request.method == 'POST':
+#         post_id = request.form.get('post_id')
+#         post = Post.query.get_or_404(post_id)
+#         if post:
+#             post.publish = datetime.utcnow()
+#             repost = Repost(post_id=post.id)
+#             db.session.add(repost)
+#             db.session.commit()
+#             return redirect(url_for('news.dash'))
+#     return render_template('news.html', **context)
+            
+
+@news.route('/post/comment', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def new_comments():
+    """ comment """
+
+    context = {
+        'current_user': current_user
+    }
+    
+    if request.method == 'POST':
+        postRef = request.form.get('postRef')
+        post = post_sender({'_id': postRef})
+        contains = request.form.get('contains')
+        if post and len(contains) > 1:
+            save_cmts({'author': current_user._id, 'postref': postRef, 'contains': contains})
+            return redirect(url_for('news.dash'))
+        return redirect(url_for('news.dash'))
+    return render_template('news.html', **context)
+
 
 @news.route('/me/all_posts', methods=['GET'], strict_slashes=False)
 @login_required
 def alls():
     """ all posts """
-    my_posts = Post.query.filter_by(author=current_user.id).order_by(Post.publish)
+    my_posts = posts.find({'author': current_user._id}).sort('publish', pymongo.DESCENDING)
     context = {
         'my_posts': my_posts,
         'current_user': current_user
@@ -96,11 +108,11 @@ def alls():
 
 @news.route('/me/users', methods=['GET'], strict_slashes=False)
 @login_required
-def users():
+def all_users():
     """ users """
-    all_users = User.query.all()
+    all_users = users.find().sort('username', pymongo.DESCENDING)
     context = {
         'current_user': current_user,
         'all_users': all_users
     }
-    return render_template('users.html', **context)
+    return render_template('users.html')

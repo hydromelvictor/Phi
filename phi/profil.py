@@ -12,9 +12,11 @@ from werkzeug.security import (
     generate_password_hash,
     check_password_hash
 )
-from .models import User, Post, Comment, Settings
-from . import app, db
+from . import app
 from .const import states
+from.db import posts, users, comments
+from .db.users import get_user, user_params
+from .db.settings import settings_save
 
 import os
 
@@ -25,13 +27,11 @@ profile = Blueprint('profile', __name__)
 @login_required
 def overview():
     """ overviews """
-    settings = Settings.query.filter_by(person=current_user.id).first()
-    posts = Post.query.filter_by(author=current_user.id).order_by(Post.publish)
+    params = user_params(current_user._id)
     context = {
         'current_user': current_user,
         'country': states,
-        'posts': posts,
-        'settings':settings
+        'settings':params
     }
     return render_template('profil/update.html', **context)
 
@@ -63,7 +63,7 @@ def update():
         current_user.city = request.form.get('city')
         current_user.job = request.form.get('job')
         current_user.status = request.form.get('status')
-        current_user.society = request.form.get('society')
+        current_user.company = request.form.get('society')
         current_user.phone = request.form.get('phone')
         current_user.obbies = request.form.get('obbies')
         current_user.cv = request.form.get('cv')
@@ -74,13 +74,37 @@ def update():
         current_user.twitter = request.form.get('twitter')
         current_user.website = request.form.get('website')
         
-        db.session.commit()
+        user = users.find_one({'_id': current_user._id})
+        users.update_one(
+            user,
+            {"$set": {
+                'username': current_user.username,
+                'bio': current_user.bio,
+                'firstname': current_user.firstname,
+                'lastname': current_user.lastname,
+                'email': current_user.email,
+                'country': current_user.country,
+                'city': current_user.city,
+                'job': current_user.job,
+                'status': current_user.status,
+                'company': current_user.company,
+                'phone': current_user.phone,
+                'obbies': current_user.obbies.split(','),
+                'cv': current_user.cv,
+                'instagram': current_user.instagram,
+                'facebook': current_user.facebook,
+                'github': current_user.github,
+                'linkedin': current_user.linkedin,
+                'twitter': current_user.twitter,
+                'website': current_user.website
+                }
+            }
+        )
         return redirect(url_for('profile.overview'))
     
     context = {
         'current_user': current_user,
-        'country': states,
-        'settings':settings
+        'country': states
     }
     return render_template('profil/update.html', **context)
 
@@ -95,9 +119,9 @@ def upload(filename):
 @login_required
 def settings():
     """ settings """
-    settings = Settings.query.filter_by(person=current_user.id).first()
+    params = user_params(current_user._id)
     if request.method == 'POST':
-        person = current_user.id
+        person = current_user._id
         hidden_fullname = True if request.form.get('hidden_fullname') == 'on'else False
         hidden_email = True if request.form.get('hidden_email') == 'on'else False
         hidden_country = True if request.form.get('hidden_country') == 'on'else False
@@ -110,28 +134,21 @@ def settings():
         hidden_cv = True if request.form.get('hidden_cv') == 'on'else False
         hidden_social = True if request.form.get('hidden_social') == 'on' else False
         comment_disable = True if request.form.get('comment_disable') == 'on' else False
-        settings = Settings(
-            person=person,
-            hidden_fullname=hidden_fullname,
-            hidden_email=hidden_email,
-            hidden_country=hidden_country,
-            hidden_city=hidden_city,
-            hidden_job=hidden_job,
-            hidden_status=hidden_status,
-            hidden_society=hidden_society,
-            hidden_phone=hidden_phone,
-            hidden_obbies=hidden_obbies,
-            hidden_cv=hidden_cv,
-            hidden_social=hidden_social,
-            comment_disable=comment_disable
+
+        params = settings_save(
+            person=person, hideFullname=hidden_fullname,
+            hideEmail=hidden_email, hideCountry=hidden_country,
+            hideCity=hidden_city, hideJob=hidden_job,
+            hideStatus=hidden_status, hideCompany=hidden_society,
+            hidePhone=hidden_phone, hideObbies=hidden_obbies,
+            hideCv=hidden_cv, hideSocial=hidden_social,
+            cmtDisable=comment_disable
         )
         
-        db.session.add(settings)
-        db.session.commit()
         return redirect(url_for('profile.overview'))
     context = {
         'current_user': current_user,
-        'settings':settings
+        'settings':params
     }
     return render_template('profil/update.html', **context)
 
@@ -142,11 +159,18 @@ def pwd():
     """ password change """
     if request.method == 'POST':
         password = request.form.get('password')
-        if check_password_hash(current_user.password, password):
+        if current_user.check_password(current_user.password, password):
             newpassword = request.form.get('newpassword')
             renewpassword = request.form.get('renewpassword')
             if newpassword == renewpassword and len(newpassword) > 3:
                 current_user.password = generate_password_hash(newpassword, method='scrypt')
+                user = get_user(current_user.id)
+                users.update_one(
+                    user,
+                    {
+                        'password': current_user.password
+                    }
+                )
                 logout_user()
                 return redirect(url_for('auth.login'))
             else:
@@ -165,26 +189,25 @@ def rm():
     """ remove account """
     if request.method == 'POST':
         if request.form.get('yes'):
-            posts = Post.query.all()
-            cmts = Comment.query.all()
+            allposts = posts.find()
+            cmts = comments.find()
             
             # delete all post for current_user
-            for post in posts:
+            for post in allposts:
                 # delete all comments of post
                 for cmt in cmts:
-                    if cmt.postRef == post.id:
-                        db.session.delete(cmt)
+                    if cmt['postref'] == post.id:
+                        comments.delete_one({'_id': cmt['_id']})
                 # delete post
-                if post.author == current_user.id:
-                    db.session.delete(post)
+                if post['author'] == current_user.id:
+                    posts.delete_one({'_id': post['_id']})
 
             #delete all comments for current_user
             for cmt in cmts:
-                if cmt.author == current_user.id:
-                    db.session.delete(cmt)
+                if cmt['author'] == current_user.id:
+                    comments.delete_one({'_id': cmt['_id']})
 
-            db.session.delete(User.query.get_or_404(current_user.id))
-            db.session.commit()
+            users.delete_one({'_id': current_user.id})
             return redirect(url_for('auth.sign'))
     context = {
         'current_user': current_user
@@ -196,10 +219,10 @@ def rm():
 @login_required
 def public(username):
     """ public profil """
-    person = User.query.filter_by(username=username).first()
-    setting = Settings.query.filter_by(person=person.id).first()
+    person = users.find_one({'username': username})
+    params = settings.find_one({'person': person['_id']})
     context = {
         'person': person,
-        'setting': setting
+        'setting': params
     }
     return render_template('profil/view.html', **context)

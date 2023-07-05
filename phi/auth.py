@@ -4,13 +4,10 @@ from flask import (
     Blueprint, render_template, redirect,
     url_for, request, flash
 )
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
-from .models import User
-from phi import db
-from flask_login import login_user, login_required, current_user, logout_user
+
+from flask_login import login_user, login_required, logout_user
+from .db import users
+from .db.users import get_user, user_save
 
 auth = Blueprint('auth', __name__)
 
@@ -36,8 +33,9 @@ def login():
             flash('username length less than 4')
             return render_template('auth/login.html', **context)
 
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
+        user = users.find_one({'username': username})
+        user = get_user(user['_id'])
+        if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('news.dash'))
         else:
@@ -64,23 +62,21 @@ def sign():
             flash('username length less than 4')
             return render_template('auth/sign.html', **context)
         
-        user = User.query.filter_by(username=username).first()
+        user = users.find_one({'username': username})
         if user:
             flash(f'sorry {username} exists !!!')
+            return render_template('auth/sign.html', **context)
+
+        user = users.find_one({'email': email})
+        if user:
+            flash(f'sorry {email} exists !!!')
             return render_template('auth/sign.html', **context)
         
         if '@' not in email and len(email) < 1:
             flash('bad email')
             return render_template('auth/sign.html', **context)
         
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash(f'sorry {email} exists !!!')
-            return render_template('auth/sign.html', **context)
-        
-        user = User(username=username, email=email, password=generate_password_hash(password, method='scrypt'))
-        db.session.add(user)
-        db.session.commit()
+        user_save(username=username, password=password, email=email)
         return redirect(url_for('auth.login'))
     return render_template('auth/sign.html', **context)
 

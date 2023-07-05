@@ -66,7 +66,7 @@
 
             <div class="row">
               <div class="col-lg-3 col-md-4 label">Company</div>
-              <div class="col-lg-9 col-md-8">{{ current_user.society }}</div>
+              <div class="col-lg-9 col-md-8">{{ current_user.company }}</div>
             </div>
 
             <div class="row">
@@ -171,7 +171,7 @@
               <div class="row mb-3">
                 <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
                 <div class="col-md-8 col-lg-9">
-                  <input name="society" type="text" class="form-control" id="company" value="{{ current_user.society }}">
+                  <input name="society" type="text" class="form-control" id="company" value="{{ current_user.company }}">
                 </div>
               </div>
 
@@ -268,67 +268,67 @@
                 <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Public profil</label>
                 <div class="col-md-8 col-lg-9">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="fullnane" name="hidden_fullname" {% if settings.hidden_fullname %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="fullnane" name="hidden_fullname" {% if settings.hideFullname %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden firstname and lastname
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="email" name="hidden_email" {% if settings.hidden_email %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="email" name="hidden_email" {% if settings.hideEmail %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden email
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="country" name="hidden_country" {% if settings.hidden_country %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="country" name="hidden_country" {% if settings.hideCountry %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden your country
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="city" name="hidden_city" {% if settings.hidden_city %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="city" name="hidden_city" {% if settings.hideCity %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden city
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="job" name="hidden_job" {% if settings.hidden_job %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="job" name="hidden_job" {% if settings.hideJob %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden job
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="status" name="hidden_status" {% if settings.hidden_status %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="status" name="hidden_status" {% if settings.hideJtatus %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden professional status
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="society" name="hidden_society" {% if settings.hidden_society %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="society" name="hidden_society" {% if settings.hideCompany %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden company
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="phone" name="hidden_phone" {% if settings.hidden_phone %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="phone" name="hidden_phone" {% if settings.hidePhone %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden phone
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="obbies" name="hidden_obbies" {% if settings.hidden_obbies %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="obbies" name="hidden_obbies" {% if settings.hideObbies %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden obbies
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="cv" name="hidden_cv" {% if settings.hidden_cv %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="cv" name="hidden_cv" {% if settings.hideCv %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden CV
                     </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="social" name="hidden_social" {% if settings.hidden_social %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="social" name="hidden_social" {% if settings.hideSocial %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       hidden social networks
                     </label>
@@ -339,7 +339,7 @@
                 <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Posts</label>
                 <div class="col-md-8 col-lg-9">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="comment" name="comment_disable" {% if settings.comment_disable %} checked {% endif %}>
+                    <input class="form-check-input" type="checkbox" id="comment" name="comment_disable" {% if settings.cmtDisable %} checked {% endif %}>
                     <label class="form-check-label" for="proOffers">
                       disable comments in your posts
                     </label>

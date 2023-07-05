@@ -152,3 +152,8 @@ class Settings(db.Model):
         self.id = str(uuid4())
         
 
+class Repost(db.Model):
+    """ repost """
+    id = db.Column(db.String, primary_key=True)
+    post_id = db.Column(db.String, db.ForeignKey(Post.id), nullable=False)
+
