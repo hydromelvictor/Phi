@@ -277,7 +277,7 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="{{ url_for('news.post') }}">
+            <a href="{{ url_for('news.post', username=current_user.username) }}">
               <i class="bi bi-circle"></i><span>new post</span>
             </a>
           </li>

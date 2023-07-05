@@ -37,13 +37,20 @@ def dash():
     return render_template('news.html', **context)
 
 
-@news.route('/me/new_post', methods=['GET', 'POST'], strict_slashes=False)
+@news.route('/<username>/newpost', methods=['GET'], strict_slashes=False)
 @login_required
-def post():
+def post(username):
     """ new post """
     context = {
         'current_user': current_user
     }
+    return render_template('post/post.html', **context)
+
+
+@news.route('/post', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def newpost():
+    """ new post """
     if request.method == 'POST':
         contains = request.form.get('tinymce')
         if len(contains) != 0 and contains != '':
@@ -52,32 +59,10 @@ def post():
     return render_template('post/post.html', **context)
 
 
-# @news.route('/me/repost', methods=['GET', 'POST'], strict_slashes=False)
-# @login_required
-# def repost():
-#     """ repost """
-    
-#     context = {
-#         'current_user': current_user
-#     }
-    
-#     if request.method == 'POST':
-#         post_id = request.form.get('post_id')
-#         post = Post.query.get_or_404(post_id)
-#         if post:
-#             post.publish = datetime.utcnow()
-#             repost = Repost(post_id=post.id)
-#             db.session.add(repost)
-#             db.session.commit()
-#             return redirect(url_for('news.dash'))
-#     return render_template('news.html', **context)
-            
-
-@news.route('/post/comment', methods=['GET', 'POST'], strict_slashes=False)
+@news.route('/comment', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def new_comments():
     """ comment """
-
     if request.method == 'POST':
         postRef = request.form.get('postRef')
         post = post_sender({'_id': postRef})
@@ -86,10 +71,6 @@ def new_comments():
             save_cmts({'author': current_user._id, 'postref': postRef, 'contains': contains})
             return redirect(url_for('news.dash'))
         return redirect(url_for('news.dash'))
-    
-    context = {
-        'current_user': current_user
-    }
     return render_template('news.html', **context)
 
 

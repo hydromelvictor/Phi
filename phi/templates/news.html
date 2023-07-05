@@ -8,6 +8,7 @@
 <div class="col-lg-7">
 
   <div class="card basic">
+
     {% for new in news %}
     <div class="card-body">
       <div class="card-title">
@@ -17,25 +18,18 @@
       <div style="width: 100%; overflow-x:auto">{{ new.post.contains|safe }}</div>
       <br>
       <div class="container row">
-          <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-heart"></i>
-            <span class="badge bg-success badge-number">3</span>
-          </a>
-          <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
-            <i class="bi bi-chat-left-text"></i>
-            <span class="badge bg-success badge-number">{{ new.cmts|length }}</span>
-          </a>
-          <form action="/me/repost" method="post" class="nav-link nav-icon col-2" data-bs-toggle="dropdown">
-            <input type="text" name="post_id" value="{{ new.post.id }}" hidden >
-            <button style="text-decoration: none; border:0; background: none;" type="submit">
-              <i class="bi bi-arrow-90deg-right"></i>
-              <span class="badge bg-success badge-number">{{ new.repost|length }}</span>
-            </button>
-          </form>
+        <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
+          <i class="bi bi-heart"></i>
+          <span class="badge bg-success badge-number">3</span>
+        </a>
+        <a class="nav-link nav-icon col-2" href="#" data-bs-toggle="dropdown">
+          <i class="bi bi-chat-left-text"></i>
+          <span class="badge bg-success badge-number">{{ new.cmts|length }}</span>
+        </a>
       </div><br>
       {% if not new.hide.cmtDisable %}
-      <form action="/post/comment" method="post">
-        <input type="text" name="postRef" value="{{ new.post._id }}" hidden>
+      <form action="/comment" method="post">
+        <input type="text" name="postref" value="{{ new.post._id }}" hidden>
         <div class="form-floating mb-3">
           <textarea class="form-control" name="contains" placeholder="Leave a comment here" id="floatingTextarea" style="height: 100px;"></textarea>
           <label for="floatingTextarea">Comments</label>
