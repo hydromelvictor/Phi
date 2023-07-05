@@ -2,7 +2,6 @@
 """ init app """
 import os
 from flask import Flask
-from flask_migrate import Migrate
 from flask_tinymce import TinyMCE
 from flask_socketio import SocketIO
 from flask_login import LoginManager
@@ -20,9 +19,9 @@ app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'medias')
 def create_app():
     """ create flask app """
     
+    socketio.init_app(app)
     tinymce = TinyMCE()
     tinymce.init_app(app)
-    socketio.init_app(app)
 
     from .auth import auth
     app.register_blueprint(auth)
@@ -46,5 +45,5 @@ def create_app():
     def load_user(user_id):
         return get_user(user_id)
 
-    return app
+    return socketio
     

@@ -11,7 +11,7 @@ class User:
     """ user """
     
     def __init__(
-        self, _id, username, email, password, img, bio,
+        self, _id, username, email, password, img, bio, joined,
         firstname, lastname, country, city, job, status,
         company, phone, obbies, cv, instagram, facebook,
         github, linkedin, twitter, website
@@ -23,6 +23,7 @@ class User:
         self.password = password
         self.img = img
         self.bio = bio
+        self.joined = joined
         self.firstname = firstname
         self.lastname = lastname
         self.country = country
@@ -104,10 +105,10 @@ def get_user(user_id):
     user = users.find_one({'_id': user_id})
     return User(
         user['_id'], user['username'], user['email'], user['password'],
-        user['img'], user['bio'], user['firstname'], user['lastname'],
-        user['country'], user['city'], user['job'], user['status'],
-        user['company'], user['phone'], user['obbies'], user['cv'],
-        user['instagram'], user['facebook'], user['github'],
+        user['img'], user['bio'], user['joined'], user['firstname'],
+        user['lastname'], user['country'], user['city'], user['job'],
+        user['status'], user['company'], user['phone'], user['obbies'],
+        user['cv'], user['instagram'], user['facebook'], user['github'],
         user['linkedin'], user['twitter'], user['website']
     ) if user else None
 

@@ -4,30 +4,27 @@ from flask import (
     Blueprint, render_template, request,
     redirect, url_for, send_from_directory, flash
 )
-from flask_login import (
-    login_required, current_user, logout_user
-)
+from flask_login import login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
+from werkzeug.security import generate_password_hash, check_password_hash
 from . import app
 from .const import states
 from .db import posts, comments
 from .db.users import get_user, user_params, users
 from .db.settings import settings_save, settings
-
 import os
 
 profile = Blueprint('profile', __name__)
 
 
-@profile.route('/me/profil/overview', methods=['GET'], strict_slashes=False)
+@profile.route('/<username>/profil/overview', methods=['GET'], strict_slashes=False)
 @login_required
-def overview():
+def overview(username):
     """ overviews """
-    params = user_params(current_user._id)
+    params = {}
+    if current_user.username == username:
+        params = user_params(current_user._id)
+
     context = {
         'current_user': current_user,
         'country': states,
@@ -42,71 +39,76 @@ def allowed_file(filename, ext):
            filename.rsplit('.', 1)[1] in ext
 
 
-@profile.route('/me/profil/update', methods=['GET', 'POST'], strict_slashes=False)
+@profile.route('/img/update', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
-def update():
-    """ profil update """
+def image():
+    """ update image profil """
     ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
     if request.method == 'POST':
         img = request.files.get('img')
         if img and allowed_file(img.filename, ALLOWED_EXTENSIONS):
             filename = secure_filename(img.filename)
             img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            current_user.img = filename
-        
-        current_user.username = request.form.get('username')
-        current_user.bio = request.form.get('bio')
-        current_user.firstname = request.form.get('firstname')
-        current_user.lastname = request.form.get('lastname')
-        current_user.email = request.form.get('email')
-        current_user.country = request.form.get('country')
-        current_user.city = request.form.get('city')
-        current_user.job = request.form.get('job')
-        current_user.status = request.form.get('status')
-        current_user.company = request.form.get('society')
-        current_user.phone = request.form.get('phone')
-        current_user.obbies = request.form.get('obbies')
-        current_user.cv = request.form.get('cv')
-        current_user.instagram = request.form.get('instagram')
-        current_user.facebook = request.form.get('facebook')
-        current_user.github = request.form.get('github')
-        current_user.linkedin = request.form.get('linkedin') 
-        current_user.twitter = request.form.get('twitter')
-        current_user.website = request.form.get('website')
+            
+            user = users.find_one({'_id': current_user._id})
+            users.update_one(user, {"$set": {'img': filename}})
+            
+            return redirect(url_for('profile.overview', username=current_user.username))
+    return render_template('profil/update.html', **context)
+
+
+@profile.route('/profil/update', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def update():
+    """ profil update """
+    if request.method == 'POST':
+        username = request.form.get('username')
+        bio = request.form.get('bio')
+        firstname = request.form.get('firstname')
+        lastname = request.form.get('lastname')
+        email = request.form.get('email')
+        country = request.form.get('country')
+        city = request.form.get('city')
+        job = request.form.get('job')
+        status = request.form.get('status')
+        company = request.form.get('society')
+        phone = request.form.get('phone')
+        obbies = request.form.get('obbies')
+        cv = request.form.get('cv')
+        instagram = request.form.get('instagram')
+        facebook = request.form.get('facebook')
+        github = request.form.get('github')
+        linkedin = request.form.get('linkedin') 
+        twitter = request.form.get('twitter')
+        website = request.form.get('website')
         
         user = users.find_one({'_id': current_user._id})
         users.update_one(
             user,
             {"$set": {
-                'img': current_user.img,
-                'username': current_user.username,
-                'bio': current_user.bio,
-                'firstname': current_user.firstname,
-                'lastname': current_user.lastname,
-                'email': current_user.email,
-                'country': current_user.country,
-                'city': current_user.city,
-                'job': current_user.job,
-                'status': current_user.status,
-                'company': current_user.company,
-                'phone': current_user.phone,
-                'obbies': current_user.obbies.split(','),
-                'cv': current_user.cv,
-                'instagram': current_user.instagram,
-                'facebook': current_user.facebook,
-                'github': current_user.github,
-                'linkedin': current_user.linkedin,
-                'twitter': current_user.twitter,
-                'website': current_user.website
+                'username': username,
+                'bio': bio if len(bio) > 1 else '',
+                'firstname': firstname if len(firstname) > 1 else '',
+                'lastname': lastname if len(lastname) > 1 else '',
+                'email': email,
+                'country': country if len(country) > 1 else '',
+                'city': city if len(city) > 1 else '',
+                'job': job if len(job) > 1 else '',
+                'status': status if len(status) > 1 else '',
+                'company': company if len(company) > 1 else '',
+                'phone': phone if len(phone) > 1 else '',
+                'obbies': obbies if len(obbies) > 1 else '',
+                'cv': cv if len(cv) > 1 else '',
+                'instagram': instagram if len(instagram) > 1 else '',
+                'facebook': facebook if len(facebook) > 1 else '',
+                'github': github if len(github) > 1 else '',
+                'linkedin': linkedin if len(linkedin) > 1 else '',
+                'twitter': twitter if len(twitter) > 1 else '',
+                'website': website if len(website) > 1 else ''
                 }
             }
         )
-        return redirect(url_for('profile.overview'))
-    
-    context = {
-        'current_user': current_user,
-        'country': states
-    }
+        return redirect(url_for('profile.overview', username=current_user.username))
     return render_template('profil/update.html', **context)
 
 
@@ -136,21 +138,44 @@ def settings():
         hidden_social = True if request.form.get('hidden_social') == 'on' else False
         comment_disable = True if request.form.get('comment_disable') == 'on' else False
 
-        params = settings_save(
-            person=person, hideFullname=hidden_fullname,
-            hideEmail=hidden_email, hideCountry=hidden_country,
-            hideCity=hidden_city, hideJob=hidden_job,
-            hideStatus=hidden_status, hideCompany=hidden_society,
-            hidePhone=hidden_phone, hideObbies=hidden_obbies,
-            hideCv=hidden_cv, hideSocial=hidden_social,
-            cmtDisable=comment_disable
-        )
-        
-        return redirect(url_for('profile.overview'))
-    context = {
-        'current_user': current_user,
-        'settings':params
-    }
+        if params:
+            settings.update_one(
+                params,
+                {
+                    "$set": {
+                        'person': person,
+                        'hideFullname': hidden_fullname,
+                        'hideEmail': hidden_email,
+                        'hideCountry': hidden_country,
+                        'hideCity': hidden_city,
+                        'hideJob': hidden_job,
+                        'hideStatus': hidden_status,
+                        'hideCompany': hidden_society,
+                        'hidePhone': hidden_phone,
+                        'hideObbies': hidden_obbies,
+                        'hideCv': hidden_cv,
+                        'hideSocial': hidden_social,
+                        'cmtDisable': comment_disable
+                    }
+                }
+            )
+        else:
+            params = settings_save(
+                person=person, 
+                hideFullname=hidden_fullname,
+                hideEmail=hidden_email, 
+                hideCountry=hidden_country,
+                hideCity=hidden_city, 
+                hideJob=hidden_job,
+                hideStatus=hidden_status, 
+                hideCompany=hidden_society,
+                hidePhone=hidden_phone, 
+                hideObbies=hidden_obbies,
+                hideCv=hidden_cv, 
+                hideSocial=hidden_social,
+                cmtDisable=comment_disable
+            )
+        return redirect(url_for('profile.overview', username=current_user.username))
     return render_template('profil/update.html', **context)
 
 
@@ -160,16 +185,18 @@ def pwd():
     """ password change """
     if request.method == 'POST':
         password = request.form.get('password')
+
         if current_user.check_password(current_user.password, password):
             newpassword = request.form.get('newpassword')
             renewpassword = request.form.get('renewpassword')
+
             if newpassword == renewpassword and len(newpassword) > 3:
-                current_user.password = generate_password_hash(newpassword, method='scrypt')
-                user = get_user(current_user.id)
+                password_hash = generate_password_hash(newpassword, method='scrypt')
+                user = users.find_one({'_id': current_user._id})
                 users.update_one(
                     user,
                     {
-                        'password': current_user.password
+                        'password': password_hash
                     }
                 )
                 logout_user()
@@ -178,9 +205,6 @@ def pwd():
                 flash('new password no equal to re-enter')
         else:
             flash('password incorrect !!!')
-    context = {
-        'current_user': current_user
-    }
     return render_template('profil/update.html', **context)
 
 
@@ -210,9 +234,6 @@ def rm():
 
             users.delete_one({'_id': current_user.id})
             return redirect(url_for('auth.sign'))
-    context = {
-        'current_user': current_user
-    }
     return render_template('profil/update.html', **context)
 
 
