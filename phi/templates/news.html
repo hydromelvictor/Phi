@@ -50,7 +50,7 @@
               {% for cmts in new.cmts %}
                 <div class="card container">
                   <span class="card-title">
-                    <img src="{{ url_for('profile.upload', filename=cmt.auth.img) }}" alt="" width="35em" class="rounded-circle">
+                    <img src="{{ url_for('profile.upload', filename=cmts.auth.img) }}" alt="" width="35em" class="rounded-circle">
                     <span><a href="">{{ cmts.auth.username }}</a> - {{ cmts.cmt.publish }}</span>
                   </span>
                   <span>
@@ -68,4 +68,28 @@
   {% endfor %}
   </div>
 </div>
+<div class="col-5">
+  <div class="card top-selling overflow-auto">
+
+    <div class="card-body pb-0">
+      <h5 class="card-title">friendship Request <span>| All days</span></h5>
+
+      <table class="table table-borderless">
+        <tbody>
+          {% for fp in friendme %}
+          <tr>
+            <th scope="row">
+              <a href="{{ url_for('profile.public', username=fp.username) }}" class="text-primary">
+                <img src="{{ url_for('profile.upload', filename=fp.img) }}" alt="img" class="rounded-circle" width="35em"> {{ fp.username }}
+              </a>
+            </th>
+            <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='accept') }}">accept</a></td>
+            <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='reject') }}">reject</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- End Top Selling -->
 {% endblock %}

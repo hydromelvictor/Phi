@@ -5,6 +5,7 @@ from uuid import uuid4
 from datetime import datetime
 
 
+# enregistrement d'un commentaire
 def save_cmts(author, contains, postref):
     """ cmts """
     comments.insert_one({

@@ -12,6 +12,7 @@ from .const import states
 from .db import posts, comments
 from .db.users import get_user, user_params, users
 from .db.settings import settings_save, settings
+from .db.friends import request_friend_to_me, friend_request, friends
 import os
 
 profile = Blueprint('profile', __name__)
@@ -21,6 +22,11 @@ profile = Blueprint('profile', __name__)
 @login_required
 def overview(username):
     """ overviews """
+    friendme = []
+    for fd in request_friend_to_me(current_user._id):
+        user = users.find_one({'_id': fd['sender_id']})
+        friendme.append(user)
+    
     params = {}
     if current_user.username == username:
         params = user_params(current_user._id)
@@ -28,7 +34,8 @@ def overview(username):
     context = {
         'current_user': current_user,
         'country': states,
-        'settings':params
+        'settings':params,
+        'friendme': friendme
     }
     return render_template('profil/update.html', **context)
 
@@ -137,6 +144,10 @@ def settings():
         hidden_cv = True if request.form.get('hidden_cv') == 'on'else False
         hidden_social = True if request.form.get('hidden_social') == 'on' else False
         comment_disable = True if request.form.get('comment_disable') == 'on' else False
+        friend_request = True if request.form.get('friend_request') == 'on' else False
+        msg_received = True if request.form.get('msg_received') == 'on' else False
+        profil_view = True if request.form.get('profil_view') == 'on' else False
+        post_comment = True if request.form.get('post_comment') == 'on' else False
 
         if params:
             settings.update_one(
@@ -155,7 +166,11 @@ def settings():
                         'hideObbies': hidden_obbies,
                         'hideCv': hidden_cv,
                         'hideSocial': hidden_social,
-                        'cmtDisable': comment_disable
+                        'cmtDisable': comment_disable,
+                        'friendRequest': friend_request,
+                        'msgReceived': msg_received,
+                        'profilView': profil_view,
+                        'postComment': post_comment
                     }
                 }
             )
@@ -173,7 +188,10 @@ def settings():
                 hideObbies=hidden_obbies,
                 hideCv=hidden_cv, 
                 hideSocial=hidden_social,
-                cmtDisable=comment_disable
+                cmtDisable=comment_disable,
+                friendRequest=friend_request,
+                msgReceived=msg_received,
+                profilView=profil_view
             )
         return redirect(url_for('profile.overview', username=current_user.username))
     return render_template('profil/update.html', **context)
@@ -243,8 +261,26 @@ def public(username):
     """ public profil """
     person = users.find_one({'username': username})
     params = user_params(person['_id'])
+    
     context = {
         'person': person,
         'setting': params
     }
     return render_template('profil/view.html', **context)
+
+
+@profile.route('/sendfriends', methods=['GET', 'POST'], strict_slashes=False)
+def sendfriends():
+    """ friends request """
+    if request.method == 'POST':
+        username = request.form.get('username')
+        person = users.find_one({'username': username})
+        if person:
+            me = friends.find_one({'sender_id': current_user._id, 'friend_id': person['_id']})
+            you = friends.find_one({'sender_id': person['_id'], 'friend_id': current_user._id})
+            if not me and not you:
+                friend_request(current_user._id, person['_id'])
+                return redirect(url_for('profile.public', username=username))
+            else:
+                return redirect(url_for('news.dash'))
+    return render_template('profil/view.html')

@@ -14,7 +14,7 @@ class User:
         self, _id, username, email, password, img, bio, joined,
         firstname, lastname, country, city, job, status,
         company, phone, obbies, cv, instagram, facebook,
-        github, linkedin, twitter, website
+        github, linkedin, twitter, website, friends
         ):
         """ init """
         self._id = _id
@@ -40,6 +40,7 @@ class User:
         self.linkedin = linkedin
         self.twitter = twitter
         self.website = website
+        self.friends = friends
     
     @staticmethod
     def is_authenticated(self):
@@ -70,7 +71,7 @@ def user_save(
     lastname='', email='', country='', city='', job='',
     status='', company='', phone='', obbies='', cv='',
     instagram='', facebook='', github='', linkedin='',
-    twitter='', website=''
+    twitter='', website='', friends=[]
     ):
     """ create new user """
     users.insert_one({
@@ -96,6 +97,7 @@ def user_save(
         'linkedin': linkedin,
         'twitter': twitter,
         'website': website,
+        'friends': friends,
         'password': generate_password_hash(password, method='scrypt')
     })
 
@@ -109,7 +111,7 @@ def get_user(user_id):
         user['lastname'], user['country'], user['city'], user['job'],
         user['status'], user['company'], user['phone'], user['obbies'],
         user['cv'], user['instagram'], user['facebook'], user['github'],
-        user['linkedin'], user['twitter'], user['website']
+        user['linkedin'], user['twitter'], user['website'], user['friends']
     ) if user else None
 
 

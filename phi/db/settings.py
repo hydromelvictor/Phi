@@ -9,7 +9,8 @@ def settings_save(
     hideCountry=False, hideCity=False, hideJob=False,
     hideStatus=False, hideCompany=False, hidePhone=False,
     hideObbies=False, hideCv=False, hideSocial=False,
-    cmtDisable=False
+    cmtDisable=False, friendRequest=False, msgReceived=False,
+    profilView=False, postComment=False
     ):
     """ settings save """
     settings.insert_one({
@@ -26,5 +27,9 @@ def settings_save(
         'hideObbies' : hideObbies,
         'hideCv' : hideCv,
         'hideSocial' : hideSocial,
-        'cmtDisable' : cmtDisable
+        'cmtDisable' : cmtDisable,
+        'friendRequest': friendRequest,
+        'msgReceived': msgReceived,
+        'profilView': profilView,
+        'postComment': postComment
     })

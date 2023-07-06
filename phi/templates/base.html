@@ -282,7 +282,7 @@
             </a>
           </li>
           <li>
-            <a href="{{ url_for('news.alls') }}">
+            <a href="{{ url_for('news.alls', username=current_user.username) }}">
               <i class="bi bi-circle"></i><span>all posts</span>
             </a>
           </li>
@@ -302,11 +302,11 @@
               border-radius: 7px;
             }
           </style>
-          {% for i in range(10) %}
+          {% for frd in friendsmy %}
           <li class="lik">
-            <a href="{{ url_for('sms.chat') }}">
-              <img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle" width="40em">
-              <span style="margin-left: 1em;">user - 1</span>
+            <a href="{{ url_for('sms.chat', friend_id=frd._id) }}">
+              <img src="{{ url_for('profile.upload', filename=frd.img) }}" class="rounded-circle" width="40em">
+              <span style="margin-left: 1em;">{{ frd.username }}</span>
             </a>
           </li>
           {% endfor %}

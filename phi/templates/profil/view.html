@@ -30,50 +30,50 @@
 
               {% if not setting.hideCompany and person.company|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">Company</div>
-                <div class="col-lg-9 col-md-8">{{ person.company }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">Company</div>
+                <div class="col-lg-8 col-md-8">{{ person.company }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hideStatus and person.status|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">professional status</div>
-                <div class="col-lg-9 col-md-8">{{ person.status }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">professional status</div>
+                <div class="col-lg-8 col-md-8">{{ person.status }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hideCountry and person.country|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">Country</div>
-                <div class="col-lg-9 col-md-8">{{ person.country }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">Country</div>
+                <div class="col-lg-8 col-md-8">{{ person.country }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hideCity and person.city|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">City</div>
-                <div class="col-lg-9 col-md-8">{{ person.city }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">City</div>
+                <div class="col-lg-8 col-md-8">{{ person.city }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hidePhone and person.phone|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">Phone</div>
-                <div class="col-lg-9 col-md-8">{{ person.phone }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">Phone</div>
+                <div class="col-lg-8 col-md-8">{{ person.phone }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hideEmail and person.email|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">Email</div>
-                <div class="col-lg-9 col-md-8">{{ person.email }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">Email</div>
+                <div class="col-lg-8 col-md-8">{{ person.email }}</div>
               </div>
               {% endif %}
 
               {% if not setting.hideObbies and person.obbies|length > 1 %}
               <div class="row">
-                <div class="col-lg-3 col-md-4 label fw-bold">Obbies</div>
-                <div class="col-lg-9 col-md-8">{{ person.obbies }}</div>
+                <div class="col-lg-4 col-md-4 label fw-bold">Obbies</div>
+                <div class="col-lg-8 col-md-8">{{ person.obbies }}</div>
               </div>
               {% endif %}
               <br><br>
@@ -113,5 +113,11 @@
           </div>
       </div>
     </div>
+    {% if person.username != current_user.username %}
+    <form action="/sendfriends" method="post">
+      <input type="text" value="{{ person.username }}" name="username" hidden>
+      <button class="btn btn-primary">send a friend request</button>
+    </form>
+    {% endif %}
 </div>
 {% endblock %}
