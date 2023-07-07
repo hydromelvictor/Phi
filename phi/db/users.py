@@ -135,4 +135,3 @@ def myrooms(user_id):
             if user['_id'] == rm['_id']:
                 myroo.append(room)
     return myroo
-            

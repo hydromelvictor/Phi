@@ -9,10 +9,12 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import app
 from .const import states
-from .db import posts, comments
+from .db.comments import comments
+from .db.posts import posts
 from .db.users import get_user, users, myrooms
 from .db.settings import settings_save, settings
 from .db.friends import request_friend_to_me, friend_request, friends
+from .db.chats import chats
 import os
 
 profile = Blueprint('profile', __name__)
@@ -63,7 +65,7 @@ def image():
             users.update_one(user, {"$set": {'img': filename}})
             
             return redirect(url_for('profile.overview', username=current_user.username))
-    return render_template('profil/update.html', **context)
+    return redirect(url_for('profile.overview', username=current_user.username))
 
 
 @profile.route('/profil/update', methods=['GET', 'POST'], strict_slashes=False)
@@ -118,7 +120,7 @@ def update():
             }
         )
         return redirect(url_for('profile.overview', username=current_user.username))
-    return render_template('profil/update.html', **context)
+    return redirect(url_for('profile.overview', username=current_user.username))
 
 
 @profile.route('/upload/<filename>')
@@ -195,8 +197,8 @@ def parameters():
                 msgReceived=msg_received,
                 profilView=profil_view
             )
-        return redirect(url_for('profile.overview', username=current_user.username))
-    return render_template('profil/update.html', **context)
+    
+    return redirect(url_for('profile.overview', username=current_user.username))
 
 
 @profile.route('/me/pwd', methods=['GET', 'POST'], strict_slashes=False)
@@ -206,7 +208,7 @@ def pwd():
     if request.method == 'POST':
         password = request.form.get('password')
 
-        if current_user.check_password(current_user.password, password):
+        if current_user.check_password(password):
             newpassword = request.form.get('newpassword')
             renewpassword = request.form.get('renewpassword')
 
@@ -216,7 +218,7 @@ def pwd():
                 users.update_one(
                     user,
                     {
-                        'password': password_hash
+                        "$set": {'password': password_hash}
                     }
                 )
                 logout_user()
@@ -225,7 +227,7 @@ def pwd():
                 flash('new password no equal to re-enter')
         else:
             flash('password incorrect !!!')
-    return render_template('profil/update.html', **context)
+    return redirect(url_for('profile.overview', username=current_user.username))
 
 
 @profile.route('/me/profil/rm', methods=['GET', 'POST'], strict_slashes=False)
@@ -234,27 +236,46 @@ def rm():
     """ remove account """
     if request.method == 'POST':
         if request.form.get('yes'):
-            allposts = posts.find()
-            cmts = comments.find()
             
-            # delete all post for current_user
-            for post in allposts:
-                # delete all comments of post
-                for cmt in cmts:
-                    if cmt['postref'] == post.id:
+            # delete all comments for me
+            for cmtme in list(comments.find()):
+                if cmtme['author'] == current_user._id:
+                    comments.delete_one({'_id': cmtme['_id']})
+            
+            # delete all friends request for me and by me
+            for req in list(friends.find()):
+                if current_user._id == req['sender_id']:
+                    friends.delete_one({'_id': req['_id']})
+                
+                if current_user._id == req['friend_id']:
+                    friends.delete_one({'_id': req['_id']})
+            
+            # delete all comments for my posts and delete all my posts
+            for postme in list(posts.find()):
+                if postme['author'] == current_user._id:
+                    allcmts = comments.find({'postref': postme['_id']})
+                    
+                    for cmt in allcmts:
                         comments.delete_one({'_id': cmt['_id']})
-                # delete post
-                if post['author'] == current_user.id:
-                    posts.delete_one({'_id': post['_id']})
-
-            #delete all comments for current_user
-            for cmt in cmts:
-                if cmt['author'] == current_user.id:
-                    comments.delete_one({'_id': cmt['_id']})
-
-            users.delete_one({'_id': current_user.id})
+                    
+                    posts.delete_one({'_id': postme['_id']})
+            
+            # delete my settings configuration
+            settings.delete_one({'person': current_user._id})
+            
+            # remove me in the all friends of users
+            for friend in current_user.friends:
+                for me in friend['friends']:
+                    if me['_id'] == current_user._id:
+                        friend['friends'].remove(me)
+            
+            # delete my profile picture
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], current_user.img))
+            # delete me
+            users.delete_one({'_id': current_user._id})
+            
             return redirect(url_for('auth.sign'))
-    return render_template('profil/update.html', **context)
+    return redirect(url_for('profile.overview', username=current_user.username))
 
 
 @profile.route('/users/<username>', methods=['GET'], strict_slashes=False)
@@ -300,4 +321,4 @@ def sendfriends():
             
             else:
                 return redirect(url_for('news.dash'))
-    return render_template('profil/view.html')
+    return redirect(url_for('profile.overview', username=current_user.username))
