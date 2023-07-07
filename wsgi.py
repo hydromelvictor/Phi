@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ runner """
-from phi import create_app, app
+from phi import create_app
 
 if __name__ == '__main__':
-    socketio = create_app()
-    socketio.run(app)
+    app = create_app()
+    app.run()

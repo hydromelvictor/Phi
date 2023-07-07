@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ users collection """
 
-from . import users, settings
+from . import users, chats
 from uuid import uuid4
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -71,7 +71,7 @@ def user_save(
     lastname='', email='', country='', city='', job='',
     status='', company='', phone='', obbies='', cv='',
     instagram='', facebook='', github='', linkedin='',
-    twitter='', website='', friends=[]
+    twitter='', website=''
     ):
     """ create new user """
     users.insert_one({
@@ -97,7 +97,7 @@ def user_save(
         'linkedin': linkedin,
         'twitter': twitter,
         'website': website,
-        'friends': friends,
+        'friends': [],
         'password': generate_password_hash(password, method='scrypt')
     })
 
@@ -125,6 +125,14 @@ def persons():
     return users.find()
 
 
-def user_params(user_id):
-    """ parameters """
-    return settings.find_one({'person': user_id})
+def myrooms(user_id):
+    """ rooms """
+    rooms = list(chats.find())
+    user = users.find_one({'_id': user_id})
+    myroo = []
+    for room in rooms:
+        for rm in room['users']:
+            if user['_id'] == rm['_id']:
+                myroo.append(room)
+    return myroo
+            

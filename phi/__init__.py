@@ -45,5 +45,5 @@ def create_app():
     def load_user(user_id):
         return get_user(user_id)
 
-    return socketio
+    return app
     

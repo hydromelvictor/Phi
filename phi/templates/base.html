@@ -302,11 +302,12 @@
               border-radius: 7px;
             }
           </style>
-          {% for frd in friendsmy %}
+          {% for room in rooms %}
           <li class="lik">
-            <a href="{{ url_for('sms.chat', friend_id=frd._id) }}">
-              <img src="{{ url_for('profile.upload', filename=frd.img) }}" class="rounded-circle" width="40em">
-              <span style="margin-left: 1em;">{{ frd.username }}</span>
+            <a href="{{ url_for('sms.chat', room=room.sms._id) }}" class="link">
+              <input type="text" name="room" value="{{ room.sms._id }}" hidden class="room">
+              <img src="{{ url_for('profile.upload', filename=room.friend.img) }}" class="rounded-circle" width="40em">
+              <span style="margin-left: 1em;">{{ room.friend.username }}</span>
             </a>
           </li>
           {% endfor %}

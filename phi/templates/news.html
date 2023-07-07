@@ -51,7 +51,7 @@
                 <div class="card container">
                   <span class="card-title">
                     <img src="{{ url_for('profile.upload', filename=cmts.auth.img) }}" alt="" width="35em" class="rounded-circle">
-                    <span><a href="">{{ cmts.auth.username }}</a> - {{ cmts.cmt.publish }}</span>
+                    <span><a href="{{ url_for('profile.public', username=cmts.auth.username) }}">{{ cmts.auth.username }}</a> - {{ cmts.cmt.publish }}</span>
                   </span>
                   <span>
                     {{ cmts.cmt.contains }}

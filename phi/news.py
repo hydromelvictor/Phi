@@ -2,11 +2,14 @@
 """ news """
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import current_user, login_required
-from .db import posts, settings
-from .db.posts import post_cmts, post_save
-from .db.users import post_sender, persons, users
+
+from .db.settings import settings
+from .db.posts import post_cmts, post_save, posts
+from .db.users import post_sender, persons, users, myrooms
 from .db.comments import save_cmts
 from .db.friends import request_friend_to_me, friends
+from .db.chats import chats, chats_save
+
 from datetime import datetime
 import pymongo
 
@@ -17,6 +20,13 @@ news = Blueprint('news', __name__)
 @login_required
 def dash():
     """ news """
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
+        
     friendme = []
     for fd in request_friend_to_me(current_user._id):
         user = users.find_one({'_id': fd['sender_id']})
@@ -38,7 +48,8 @@ def dash():
     context = {
         'news': news,
         'current_user': current_user,
-        'friendme': friendme
+        'friendme': friendme,
+        'rooms': rooms
     }
     return render_template('news.html', **context)
 
@@ -47,8 +58,15 @@ def dash():
 @login_required
 def post(username):
     """ new post """
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
     context = {
-        'current_user': current_user
+        'current_user': current_user,
+        'rooms': rooms
     }
     return render_template('post/post.html', **context)
 
@@ -82,13 +100,21 @@ def new_comments():
 @login_required
 def alls(username):
     """ all posts """
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
+                    
     my_posts = {}
     if current_user.username == username:
         my_posts = posts.find({'author': current_user._id}).sort('publish', pymongo.DESCENDING)
 
     context = {
         'my_posts': my_posts,
-        'current_user': current_user
+        'current_user': current_user,
+        'rooms': rooms
     }
     return render_template('post/all.html', **context)
 
@@ -97,9 +123,17 @@ def alls(username):
 @login_required
 def all_users():
     """ users """
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
+                    
     context = {
         'current_user': current_user,
-        'all_users': persons()
+        'all_users': persons(),
+        'rooms': rooms
     }
     return render_template('users.html', **context)
 
@@ -118,15 +152,17 @@ def friendresp(sender_id, resp):
             users.update_one(
                 me,
                 {
-                    "$set": {'friends': me['friends'].append(you)}
+                    "$push": {'friends': you}
                 }
             )
             users.update_one(
                 you,
                 {
-                    "$set": {'friends': me['friends'].append(me)}
+                    "$push": {'friends': me}
                 }
             )
+
+            chats_save([me, you])
         
         friends.delete_one({'sender_id': sender_id, 'friend_id': current_user._id})
         return redirect(url_for('news.dash'))

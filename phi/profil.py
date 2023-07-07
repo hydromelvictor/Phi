@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import app
 from .const import states
 from .db import posts, comments
-from .db.users import get_user, user_params, users
+from .db.users import get_user, users, myrooms
 from .db.settings import settings_save, settings
 from .db.friends import request_friend_to_me, friend_request, friends
 import os
@@ -22,20 +22,22 @@ profile = Blueprint('profile', __name__)
 @login_required
 def overview(username):
     """ overviews """
-    friendme = []
-    for fd in request_friend_to_me(current_user._id):
-        user = users.find_one({'_id': fd['sender_id']})
-        friendme.append(user)
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
     
     params = {}
     if current_user.username == username:
-        params = user_params(current_user._id)
+        params = settings.find_one({'person': current_user._id})
 
     context = {
         'current_user': current_user,
         'country': states,
         'settings':params,
-        'friendme': friendme
+        'rooms': rooms
     }
     return render_template('profil/update.html', **context)
 
@@ -127,9 +129,9 @@ def upload(filename):
 
 @profile.route('/me/settings', methods=['GET', 'POST'], strict_slashes=False)
 @login_required
-def settings():
+def parameters():
     """ settings """
-    params = user_params(current_user._id)
+    params = settings.find_one({'person': current_user._id})
     if request.method == 'POST':
         person = current_user._id
         hidden_fullname = True if request.form.get('hidden_fullname') == 'on'else False
@@ -144,10 +146,10 @@ def settings():
         hidden_cv = True if request.form.get('hidden_cv') == 'on'else False
         hidden_social = True if request.form.get('hidden_social') == 'on' else False
         comment_disable = True if request.form.get('comment_disable') == 'on' else False
-        friend_request = True if request.form.get('friend_request') == 'on' else False
-        msg_received = True if request.form.get('msg_received') == 'on' else False
-        profil_view = True if request.form.get('profil_view') == 'on' else False
-        post_comment = True if request.form.get('post_comment') == 'on' else False
+        friend_request = request.form.get('friend_request')
+        msg_received = request.form.get('msg_received')
+        profil_view = request.form.get('profil_view')
+        post_comment = request.form.get('post_comment')
 
         if params:
             settings.update_one(
@@ -259,12 +261,20 @@ def rm():
 @login_required
 def public(username):
     """ public profil """
+    rooms = []
+    for frd in current_user.friends:
+        for sms in myrooms(current_user._id):
+            for rm in sms['users']:
+                if frd['_id'] == rm['_id']:
+                    rooms.append({'friend': frd, 'sms': sms})
+                    
     person = users.find_one({'username': username})
-    params = user_params(person['_id'])
+    params = settings.find_one({'person': person['_id']})
     
     context = {
         'person': person,
-        'setting': params
+        'setting': params,
+        'rooms': rooms
     }
     return render_template('profil/view.html', **context)
 
@@ -275,12 +285,19 @@ def sendfriends():
     if request.method == 'POST':
         username = request.form.get('username')
         person = users.find_one({'username': username})
+        
         if person:
             me = friends.find_one({'sender_id': current_user._id, 'friend_id': person['_id']})
             you = friends.find_one({'sender_id': person['_id'], 'friend_id': current_user._id})
+            
+            for friend in current_user.friends:
+                if friend['_id'] == person['_id']:
+                    return redirect(url_for('news.dash'))
+
             if not me and not you:
                 friend_request(current_user._id, person['_id'])
                 return redirect(url_for('profile.public', username=username))
+            
             else:
                 return redirect(url_for('news.dash'))
     return render_template('profil/view.html')
