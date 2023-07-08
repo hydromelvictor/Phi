@@ -27,7 +27,15 @@
           <span class="badge bg-success badge-number">{{ new.cmts|length }}</span>
         </a>
       </div><br>
-      {% if not new.hide.cmtDisable %}
+      {% if new.hide.cmtDisable %}
+      <span>this user has disabled comments</span>
+      {% elif params.postComment == 'onlyme' and current_user._id != new.author._id %}
+      <span>only the author is able to comment</span>
+      {% elif params.postComment == 'friend' and new.author._id != current_user._id and not (current_user._id is friendEqTo(news.author.friends)) %}
+      <span>only friends of the author are allowed to comment</span>
+      {% elif params.postComment == 'their' and new.author._id != current_user._id and not (current_user._id is friendEqTo(new.author.friends)) and not (current_user._id is globalFriendEqTo(new.author.friends)) %}
+      <span>only friends of the author and their friends are allowed to comment</span>
+      {% else %}
       <form action="/comment" method="post">
         <input type="text" name="postref" value="{{ new.post._id }}" hidden>
         <div class="form-floating mb-3">

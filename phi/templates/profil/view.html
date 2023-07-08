@@ -121,11 +121,18 @@
         </div>
       {% endif %}
 
+
       {% if current_user._id != person._id %}
+      {% elif setting.msgReceived == 'their' and not (current_user._id is friendEqTo(person.friends)) and not (current_user._id is globalFriendEqTo(person.friends)) %}
+      {% elif setting.msgReceived == 'friend' and not (current_user._id is friendEqTo(person.friends)) %}
       <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container justify-content-center" href="{{ url_for('sms.chat', username=person.username) }}" role="button">send message</a><br>
+      {% else %}
       {% endif %}
     </div>
     {% if person.username != current_user.username and not (current_user._id is friendEqTo(person.friends)) %}
+    {% elif setting.friendRequest != 'noperson' %}
+    {% elif setting.friendRequest == 'friendof'  and not (current_user._id is globalFriendEqTo(person.friends)) %}
+    {% else %}
     <form action="/sendfriends" method="post" class="col-lg-8 col-md-4 ml-4 container">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-primary">send a friend request</button>
