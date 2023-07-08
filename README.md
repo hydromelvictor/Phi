@@ -48,6 +48,7 @@ this adventure to Phi is a composition of three backend engineers:
 
 ```
 myterminal:$ git clone https://github.com/harkinder-dark/Phi.git
+myterminal:$ cd Phi
 ```
 
 **linux**
