@@ -91,36 +91,18 @@ myterminal:$ python -m wsgi
 
 <br>
 
-## News - New post - View post
+## Composition of the project
 
-| News | New post | View post |
-|:----:|:--------:|:---------:|
-| ![](./phi/static/img/Capture4.PNG) | ![](./phi/static/img/Capture3.PNG) | ![](./phi/static/img/Capture5.PNG) |
-
-<br>
-
-## comments post
-
-| write comment | post comment |
-|:-------------:|:------------:|
-| ![](./phi/static/img/Capture12.PNG) | ![](./phi/static/img/Capture13.PNG) |
-
-## Profil and Profil update
-
-| profil | profil update | finish view |
-|:------:|:-------------:|:-----------:|
-|![](./phi/static/img/Capture6.PNG) | ![](./phi/static/img/Capture8.PNG) | ![](./phi/static/img/Capture9.PNG) |
-
-<br>
-
-## Settings - View users profil -
-
-| settings | view profil and send friends request | user view friend request|
-|:--------:|:------------------------------------:|:-----------------------:|
-| ![](./phi/static/img/Capture10.PNG) | ![](./phi/static/img/Capture15.PNG) | ![](./phi/static/img/Capture16.PNG) |
-
-## Remove account
-
-| before remove| remove | after remove |
-|:------------:|:------------:|:------------:|
-| ![](./phi/static/img/Capture14.PNG) | ![](./phi/static/img/Capture18.PNG) | ![](./phi/static/img/Capture19.PNG) |
+* <span style="color: deepskyblue; font-weight: bolder;">Authentication</span>
+  * user registration and authentication required before access
+* <span style="color: deepskyblue; font-weight: bolder;">news</span>
+  * a set of user posts constituting news that can be consulted immediately after authentication
+* <span style="color: deepskyblue; font-weight: bolder;">profile management</span>
+  * access to your private user profile allowing the modification of the user name, the profile photo, and also the entry of more personal information allowing your profile to be more reinforced and admirable for public consultation which increases the possibility of friendship and much more...
+  access to the parameter allowing you to control who could see your public profile, comment on your posts, write to you, send you friend requests and much more.
+  you have access to the modification of your password and of course to the deletion of your account which leads to the total, immediate, definitive and irrecoverable deletion of your data and of course all this in one place and tidy
+* <span style="color: deepskyblue; font-weight: bolder;">write posts</span>
+  * at your disposal a complete tool for writing your posts capable of integrating text, images, links, videos and much more
+* access to the public profile of all users
+  * yes access to the public profile of course if the user's configuration allows you
+* <span style="color: deepskyblue; font-weight: bolder;">I let you make the other discoveries on your own ...</span>
