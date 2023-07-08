@@ -10,11 +10,11 @@
   <div class="card">
     <div class="card-body">
       {% if setting.profilView == 'onlyme' and person._id != current_user._id %}
-        <h1 class="container justify-content-center align-item-center">sorry this profile is private</h1>
+        <br><h3 class="container justify-content-center align-item-center">sorry this profile is private</h3><br>
       {% elif setting.profilView == 'friend' and person._id != current_user._id and not (current_user._id is friendEqTo(person.friends)) %}
-        <h1 class="container justify-content-center align-item-center">sorry only these friends are allowed</h1>
+        <h3 class="container justify-content-center align-item-center">sorry only these friends are allowed</h3><br>
       {% elif setting.profilView == 'their' and person._id != current_user._id and not (current_user._id is friendEqTo(person.friends)) and not (current_user._id is globalFriendEqTo(person.friends)) %}
-      <h1 class="container justify-content-center align-item-center">sorry only these friends and their friends are allowed</h1>
+      <br><h3 class="container justify-content-center align-item-center">sorry only these friends and their friends are allowed</h3><br>
       {% else %}
         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
@@ -122,25 +122,25 @@
       {% endif %}
 
       {% if current_user._id != person._id %}
-      <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container" href="#" role="button">send message</a><br>
+      <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container justify-content-center" href="{{ url_for('sms.chat', username=person.username) }}" role="button">send message</a><br>
       {% endif %}
     </div>
     {% if person.username != current_user.username and not (current_user._id is friendEqTo(person.friends)) %}
-    <form action="/sendfriends" method="post">
+    <form action="/sendfriends" method="post" class="col-lg-8 col-md-4 ml-4 container">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-primary">send a friend request</button>
-    </form>
+    </form><br>
     {% endif %}
 
     {% if friender and current_user._id != person._id %}
-    <form action="">
+    <form action="/abortfriends" method="post">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-warning" type="submit">remove a friend request</button>
     </form>
     {% endif %}
 
     {% if current_user.id != person._id and current_user._id is friendEqTo(person.friends) %}
-    <form action="">
+    <form action="/breakfriends" method="post">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-danger" type="submit">break the friendship</button>
     </form>

@@ -340,5 +340,27 @@ def abortfriends():
         person = users.find_one({'username': username})
         if person:
             friends.delete_one({'sender_id': current_user._id, 'friend_id': person._id})
-    return redirect(url_for('prolife.public'))
+    return redirect(url_for('prolife.public', username=username))
 
+
+@profile.route('/breakfriends', methods=['GET', 'POST'], strict_slashes=False)
+def breakfriends():
+    """ break friend relation """
+    if request.method == 'POST':
+        username = request.form.get('username')
+        person = users.find_one({'username': username})
+        me = users.find_one({'_id': current_user._id})
+        if person:
+            users.update_one(
+                person,
+                {
+                    "$pull": {'friends': {'_id': current_user._id}}
+                }
+            )
+            users.update_one(
+                me,
+                {
+                    "$pull": {'friends': {'_id': person['_id']}}
+                }
+            )
+    return redirect(url_for('profile.public', username=username))
