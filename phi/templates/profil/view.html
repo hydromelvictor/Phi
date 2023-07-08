@@ -7,8 +7,15 @@
 {% block basebody %}
 <div class="col-lg-6 container justify-content-center">
 
-    <div class="card">
-      <div class="card-body">
+  <div class="card">
+    <div class="card-body">
+      {% if setting.profilView == 'onlyme' and person._id != current_user._id %}
+        <h1 class="container justify-content-center align-item-center">sorry this profile is private</h1>
+      {% elif setting.profilView == 'friend' and person._id != current_user._id and not (current_user._id is friendEqTo(person.friends)) %}
+        <h1 class="container justify-content-center align-item-center">sorry only these friends are allowed</h1>
+      {% elif setting.profilView == 'their' and person._id != current_user._id and not (current_user._id is friendEqTo(person.friends)) and not (current_user._id is globalFriendEqTo(person.friends)) %}
+      <h1 class="container justify-content-center align-item-center">sorry only these friends and their friends are allowed</h1>
+      {% else %}
         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
             <img src="{{ url_for('profile.upload', filename=person.img) }}" alt="Profile" class="rounded-circle" width="150em"><br>
@@ -111,13 +118,61 @@
             </div>
             {% endif %}
           </div>
-      </div>
+        </div>
+      {% endif %}
+
+      {% if current_user._id != person._id %}
+      <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container" href="#" role="button">send message</a><br>
+      {% endif %}
     </div>
-    {% if person.username != current_user.username %}
+    {% if person.username != current_user.username and not (current_user._id is friendEqTo(person.friends)) %}
     <form action="/sendfriends" method="post">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-primary">send a friend request</button>
     </form>
     {% endif %}
+
+    {% if friender and current_user._id != person._id %}
+    <form action="">
+      <input type="text" value="{{ person.username }}" name="username" hidden>
+      <button class="btn btn-warning" type="submit">remove a friend request</button>
+    </form>
+    {% endif %}
+
+    {% if current_user.id != person._id and current_user._id is friendEqTo(person.friends) %}
+    <form action="">
+      <input type="text" value="{{ person.username }}" name="username" hidden>
+      <button class="btn btn-danger" type="submit">break the friendship</button>
+    </form>
+    {% endif %}
+
+    {% if current_user._id == person._id %}
+    <div class="col-lg-6">
+      <br><br>
+      <div class="card top-selling overflow-auto">
+
+        <div class="card-body pb-0">
+        <h5 class="card-title">friendship Request <span>| All days</span></h5>
+
+        <table class="table table-borderless">
+          <tbody>
+          {% for fp in friendme %}
+            <tr>
+              <th scope="row">
+                <a href="{{ url_for('profile.public', username=fp.username) }}" class="text-primary">
+                  <img src="{{ url_for('profile.upload', filename=fp.img) }}" alt="img" class="rounded-circle" width="35em"> {{ fp.username }}
+                </a>
+              </th>
+              <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='accept') }}">accept</a></td>
+              <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='reject') }}">reject</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div><!-- End Top Selling -->
+    
 </div>
 {% endblock %}

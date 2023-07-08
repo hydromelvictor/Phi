@@ -352,30 +352,45 @@
                   </div>
                   <br>
                 </div>
-
                 
                   <legend class="col-md-4 col-lg-3 col-form-label">Who can see your profile</legend>
                   <div class="col-md-8 col-lg-9">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios1" value="only">
+                      {% if settings.profilView == 'onlyme' %}
+                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios1" value="onlyme" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios1" value="onlyme">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios1">
                         only me
                       </label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check" >
+                      {% if settings.profilView == 'all' %}
+                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios2" value="all" checked>
+                      {% else %}
                       <input class="form-check-input" type="radio" name="profil_view" id="gridRadios2" value="all">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios2">
                         all the fashion
                       </label>
                     </div>
                     <div class="form-check disabled">
+                      {% if settings.profilView == 'friend' %}
+                        <input class="form-check-input" type="radio" name="profil_view" id="gridRadios3" value="friend" checked>
+                        {% else %}
                       <input class="form-check-input" type="radio" name="profil_view" id="gridRadios3" value="friend">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         only my friends
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios4" value="thier">
+                      {% if settings.profilView == 'their' %}
+                        <input class="form-check-input" type="radio" name="profil_view" id="gridRadios4" value="their" checked>
+                        {% else %}
+                      <input class="form-check-input" type="radio" name="profil_view" id="gridRadios4" value="their">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         my friends and their friends
                       </label>
@@ -386,25 +401,41 @@
                   <legend class="col-md-4 col-lg-3 col-form-label">who can message me</legend>
                   <div class="col-md-8 col-lg-9">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios5">
+                      {% if settings.msgReceived == 'noperson' %}
+                        <input class="form-check-input" type="radio" name="msg_received" id="gridRadios5" value="noperson" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios5" value="noperson">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios1">
                         no person
                       </label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios6">
+                      {% if settings.msgReceived == 'all' %}
+                        <input class="form-check-input" type="radio" name="msg_received" id="gridRadios6" value="all" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios6" value="all">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios2">
                         all the fashion
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios7">
+                      {% if settings.msgReceived == 'friend' %}
+                        <input class="form-check-input" type="radio" name="msg_received" id="gridRadios7" value="friend" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios7" value="friend">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         only my friends
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios8">
+                      {% if settings.msgReceived == 'their' %}
+                        <input class="form-check-input" type="radio" name="msg_received" id="gridRadios8" value="their" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="msg_received" id="gridRadios8" value="their">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         my friends and their friends
                       </label>
@@ -415,25 +446,41 @@
                   <legend class="col-md-4 col-lg-3 col-form-label">who can comment on my posts</legend>
                   <div class="col-md-8 col-lg-9">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios9" value="option1">
+                      {% if settings.postComment == 'onlyme' %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios9" value="onlyme" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios9" value="onlyme">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios1">
                         only me
                       </label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios10" value="option2">
+                      {% if settings.postComment == 'all' %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios10" value="all"  checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios10" value="all" >
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios2">
                         all the fashion
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios11" value="option">
+                      {% if settings.postComment == 'friend' %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios11" value="friend" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios11" value="friend">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         only my friends
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios12" value="option">
+                      {% if settings.postComment == 'their' %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios12" value="their" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="post_comment" id="gridRadios12" value="their">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         my friends and their friends
                       </label>
@@ -444,19 +491,31 @@
                   <legend class="col-md-4 col-lg-3 col-form-label">who can send me friend request</legend>
                   <div class="col-md-8 col-lg-9">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios13" value="option1">
+                      {% if settings.friendRequest == 'noperson' %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios13"  value="noperson" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios13"  value="noperson">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios1">
                         no person
                       </label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios14" value="option2">
+                      {% if settings.friendRequest == 'all' %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios14" value="all" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios14" value="all">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios2">
                         all the fashion
                       </label>
                     </div>
                     <div class="form-check disabled">
-                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios15" value="option">
+                      {% if settings.friendRequest == 'friendof' %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios15" value="friendof" checked>
+                      {% else %}
+                      <input class="form-check-input" type="radio" name="friend_request" id="gridRadios15" value="friendof">
+                      {% endif %}
                       <label class="form-check-label" for="gridRadios3">
                         friends of my friends
                       </label>
@@ -473,33 +532,7 @@
                     </label>
                   </div>
                 </div>
-                <!--label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
-                <div class="col-md-8 col-lg-9">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                    <label class="form-check-label" for="changesMade">
-                      Changes made to your account
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                    <label class="form-check-label" for="newProducts">
-                      Information on new products and services
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="proOffers">
-                    <label class="form-check-label" for="proOffers">
-                      Marketing and promo offers
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
-                    <label class="form-check-label" for="securityNotify">
-                      Security alerts
-                    </label>
-                  </div>
-                </div-->
+      
               </div>
 
               <div class="text-center">

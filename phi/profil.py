@@ -288,20 +288,22 @@ def rm():
 @login_required
 def public(username):
     """ public profil """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
-                    
+    
+    friendme = []
+    for fd in request_friend_to_me(current_user._id):
+        user = users.find_one({'_id': fd['sender_id']})
+        friendme.append(user)
+    
     person = users.find_one({'username': username})
     params = settings.find_one({'person': person['_id']})
+    
+    friender = friends.find_one({'sender_id': current_user._id, 'friend_id': person['_id']})
     
     context = {
         'person': person,
         'setting': params,
-        'rooms': rooms
+        'friender': friender,
+        'friendme': friendme
     }
     return render_template('profil/view.html', **context)
 
@@ -328,3 +330,15 @@ def sendfriends():
             else:
                 return redirect(url_for('news.dash'))
     return redirect(url_for('profile.overview', username=current_user.username))
+
+
+@profile.route('/abortfriends', methods=['GET', 'POST'], strict_slashes=False)
+def abortfriends():
+    """ abort friend request """
+    if request.method == 'POST':
+        username = request.form.get('username')
+        person = users.find_one({'username': username})
+        if person:
+            friends.delete_one({'sender_id': current_user._id, 'friend_id': person._id})
+    return redirect(url_for('prolife.public'))
+

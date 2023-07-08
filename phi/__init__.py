@@ -34,6 +34,9 @@ def create_app():
     
     from .chat import sms
     app.register_blueprint(sms)
+    
+    from root.jinja import test
+    app.register_blueprint(test)
 
     manager = LoginManager()
     manager.login_view = 'auth.login'
