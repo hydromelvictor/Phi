@@ -20,12 +20,6 @@ news = Blueprint('news', __name__)
 @login_required
 def dash():
     """ news """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
         
     friendme = []
     for fd in request_friend_to_me(current_user._id):
@@ -48,8 +42,7 @@ def dash():
     context = {
         'news': news,
         'current_user': current_user,
-        'friendme': friendme,
-        'rooms': rooms
+        'friendme': friendme
     }
     return render_template('news.html', **context)
 
@@ -58,15 +51,8 @@ def dash():
 @login_required
 def post(username):
     """ new post """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
     context = {
-        'current_user': current_user,
-        'rooms': rooms
+        'current_user': current_user
     }
     return render_template('post/post.html', **context)
 
@@ -100,21 +86,13 @@ def new_comments():
 @login_required
 def alls(username):
     """ all posts """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
-                    
     my_posts = {}
     if current_user.username == username:
         my_posts = posts.find({'author': current_user._id}).sort('publish', pymongo.DESCENDING)
 
     context = {
         'my_posts': my_posts,
-        'current_user': current_user,
-        'rooms': rooms
+        'current_user': current_user
     }
     return render_template('post/all.html', **context)
 
@@ -123,17 +101,9 @@ def alls(username):
 @login_required
 def all_users():
     """ users """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
-                    
     context = {
         'current_user': current_user,
-        'all_users': persons(),
-        'rooms': rooms
+        'all_users': persons()
     }
     return render_template('users.html', **context)
 

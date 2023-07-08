@@ -22,26 +22,23 @@ def authenticated_only(f):
     return wrapped
 
 
-@sms.route('/chat/<room>', methods=['GET'], strict_slashes=False)
+@sms.route('/chat/<username>', methods=['GET'], strict_slashes=False)
 @login_required
-def chat(room):
+def chat(username):
     """ chat """
-    rooms = []
-    for frd in current_user.friends:
-        for sms in myrooms(current_user._id):
-            for rm in sms['users']:
-                if frd['_id'] == rm['_id']:
-                    rooms.append({'friend': frd, 'sms': sms})
 
-    chatroom = {}
-    for diroom in rooms:
-        if room == diroom['sms']['_id']:
-            chatroom = diroom
+    friend = users.find_one({'username': username})
+    room = {}
+    for frd in current_user.friends:
+        if frd['_id'] == friend:
+            for rm in myrooms(current_user._id):
+                for user in rm['users']:
+                    if frd['_id'] == user['_id']:
+                        room = rm
     
     context = {
         'current_user': current_user,
-        'chatroom': chatroom,
-        'rooms': rooms,
+        'friend': friend,
         'room': room
     }
     return render_template('sms/sms.html', **context)

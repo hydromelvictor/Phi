@@ -269,6 +269,12 @@ def rm():
                     if me['_id'] == current_user._id:
                         friend['friends'].remove(me)
             
+            # delete all chat with users
+            for chatme in list(chats.find()):
+                for user in chatme['users']:
+                    if user['_id'] == current_user._id:
+                        chats.delete_one({'_id': chatme['_id']})
+            
             # delete my profile picture
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], current_user.img))
             # delete me
