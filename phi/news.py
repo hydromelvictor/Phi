@@ -26,8 +26,6 @@ def dash():
         user = users.find_one({'_id': fd['sender_id']})
         friendme.append(user)
     
-    params = settings.find_one({'person': current_user._id})
-    
     allposts = posts.find().sort('publish', pymongo.DESCENDING)
     news = []
     for post in allposts:
@@ -44,8 +42,7 @@ def dash():
     context = {
         'news': news,
         'current_user': current_user,
-        'friendme': friendme,
-        'params': params
+        'friendme': friendme
     }
     return render_template('news.html', **context)
 

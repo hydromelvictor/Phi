@@ -7,6 +7,7 @@ from flask_socketio import disconnect
 from phi import socketio
 from flask_socketio import send, join_room, leave_room
 from .db.users import users, myrooms
+from .db.chats import chats_save
 from time import localtime, strftime
 
 sms = Blueprint('sms', __name__)
@@ -28,14 +29,22 @@ def chat(username):
     """ chat """
 
     friend = users.find_one({'username': username})
+    
     room = {}
     for frd in current_user.friends:
-        if frd['_id'] == friend:
+        if frd['_id'] == friend['_id']:
             for rm in myrooms(current_user._id):
                 for user in rm['users']:
                     if frd['_id'] == user['_id']:
                         room = rm
-    
+        else:
+            chats_save([friend, current_user])
+            for chat in myrooms(current_user._id):
+                for user in chat['users']:
+                    if friend['_id'] == user['_id']:
+                        room = chat
+            break
+         
     context = {
         'current_user': current_user,
         'friend': friend,

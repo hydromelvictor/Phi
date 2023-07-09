@@ -29,11 +29,11 @@
       </div><br>
       {% if new.hide.cmtDisable %}
       <span>this user has disabled comments</span>
-      {% elif params.postComment == 'onlyme' and current_user._id != new.author._id %}
+      {% elif new.hide.postComment == 'onlyme' and current_user._id != new.author._id %}
       <span>only the author is able to comment</span>
-      {% elif params.postComment == 'friend' and new.author._id != current_user._id and not (current_user._id is friendEqTo(news.author.friends)) %}
+      {% elif new.hide.postComment == 'friend' and new.author._id != current_user._id and not (current_user._id is friendEqTo(new.author.friends)) %}
       <span>only friends of the author are allowed to comment</span>
-      {% elif params.postComment == 'their' and new.author._id != current_user._id and not (current_user._id is friendEqTo(new.author.friends)) and not (current_user._id is globalFriendEqTo(new.author.friends)) %}
+      {% elif new.hide.postComment == 'their' and new.author._id != current_user._id and not (current_user._id is friendEqTo(new.author.friends)) and not (current_user._id is globalFriendEqTo(new.author.friends)) %}
       <span>only friends of the author and their friends are allowed to comment</span>
       {% else %}
       <form action="/comment" method="post">

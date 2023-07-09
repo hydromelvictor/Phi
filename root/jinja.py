@@ -26,7 +26,7 @@ def globalFriendEqTo(user_id: str, friends:list):
     return True if user not in ...
     """
     for user in friends:
-        if not friendNoEqTo(user_id, user['friends']):
-            return False
-    return True
+        if friendEqTo(user_id, user['friends']):
+            return True
+    return False
 

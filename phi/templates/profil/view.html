@@ -121,16 +121,20 @@
         </div>
       {% endif %}
 
-
+      <!-- ok good -->
       {% if current_user._id != person._id %}
-      {% elif setting.msgReceived == 'their' and not (current_user._id is friendEqTo(person.friends)) and not (current_user._id is globalFriendEqTo(person.friends)) %}
-      {% elif setting.msgReceived == 'friend' and not (current_user._id is friendEqTo(person.friends)) %}
-      <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container justify-content-center" href="{{ url_for('sms.chat', username=person.username) }}" role="button">send message</a><br>
+      {% if setting.msgReceived == 'their' and not (current_user._id is friendEqTo(person.friends) or current_user._id is globalFriendEqTo(person.friends)) %}
+      {% elif setting.msgReceived == 'friend' and not current_user._id is friendEqTo(person.friends) %}
       {% else %}
+      <a class="btn btn-outline-primary col-lg-4 col-md-4 ml-4 container justify-content-center" href="{{ url_for('sms.chat', username=person.username) }}" role="button">send message</a><br>
+      {% endif %}
       {% endif %}
     </div>
-    {% if person.username != current_user.username and not (current_user._id is friendEqTo(person.friends)) %}
-    {% elif setting.friendRequest != 'noperson' %}
+
+    <!-- ok good -->
+    {% if setting.friendRequest != 'noperson' %}
+    {% if person._id != current_user._id and not (current_user._id is friendEqTo(friendme)) %}
+    {% if current_user._id is friendEqTo(person.friends) %}
     {% elif setting.friendRequest == 'friendof'  and not (current_user._id is globalFriendEqTo(person.friends)) %}
     {% else %}
     <form action="/sendfriends" method="post" class="col-lg-8 col-md-4 ml-4 container">
@@ -138,7 +142,10 @@
       <button class="btn btn-primary">send a friend request</button>
     </form><br>
     {% endif %}
+    {% endif %}
+    {% endif %}
 
+    <!-- ok good -->
     {% if friender and current_user._id != person._id %}
     <form action="/abortfriends" method="post">
       <input type="text" value="{{ person.username }}" name="username" hidden>
@@ -146,15 +153,17 @@
     </form>
     {% endif %}
 
-    {% if current_user.id != person._id and current_user._id is friendEqTo(person.friends) %}
+    <!-- ok good -->
+    {% if current_user._id != person._id and current_user._id is friendEqTo(person.friends) %}
     <form action="/breakfriends" method="post">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-danger" type="submit">break the friendship</button>
     </form>
     {% endif %}
 
+    <!-- ok good -->
     {% if current_user._id == person._id %}
-    <div class="col-lg-6">
+    <div class="row container">
       <br><br>
       <div class="card top-selling overflow-auto">
 
