@@ -7,7 +7,7 @@ from flask_socketio import disconnect
 from phi import socketio
 from flask_socketio import send, join_room, leave_room
 from .db.users import users, myrooms
-from .db.chats import chats_save
+from .db.chats import chats_save, chats
 from time import localtime, strftime
 
 sms = Blueprint('sms', __name__)
@@ -37,13 +37,6 @@ def chat(username):
                 for user in rm['users']:
                     if frd['_id'] == user['_id']:
                         room = rm
-        else:
-            chats_save([friend, current_user])
-            for chat in myrooms(current_user._id):
-                for user in chat['users']:
-                    if friend['_id'] == user['_id']:
-                        room = chat
-            break
     
     from .news import friendme
     context = {
@@ -60,23 +53,27 @@ def chat(username):
 def message(data):
     """ recieved message """
     room = data['room']
+    chating = chats.find_one({'_id': room})
     tm = strftime('%b-%d %I:%M%p', localtime())
+    
     chats.update_one(
-        room,
+        chating,
         {
-            "$set": {
-                'publish': tm
-            },
-            "$push": {
-                'sms': {
-                    'msg': data['msg'],
-                    'tm': tm,
-                    'username': data['username']
-                }
-            }
+            "$set": { 'publish': tm }
         }
     )
-    send({'msg': data['msg'], 'username': data['username'], 'tm': tm}, room=data['room'])
+    sms = {
+        'msg': data['msg'],
+        'tm': tm,
+        'username': data['username']
+    }
+    chats.update_one(
+        chating,
+        {
+            "$push": {'sms': sms}
+        }
+    )
+    send({'msg': data['msg'], 'username': current_user.username, 'tm': tm}, room=data['room'])
 
 
 @socketio.on('join')
@@ -84,7 +81,6 @@ def message(data):
 def join(data):
     """ join """
     join_room(data['room'])
-    send({'msg': data['username'] + "join" + data['room']}, room=data['room'])
     
 
 @socketio.on('leave')
@@ -92,5 +88,3 @@ def join(data):
 def leave(data):
     """ leave """
     leave_room(data['room'])
-    send({'msg': data['username'] + "left" + data['room']}, room=data['room'])
-    

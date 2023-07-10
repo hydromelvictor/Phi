@@ -154,7 +154,6 @@ def parameters():
         hidden_social = True if request.form.get('hidden_social') == 'on' else False
         comment_disable = True if request.form.get('comment_disable') == 'on' else False
         friend_request = request.form.get('friend_request')
-        msg_received = request.form.get('msg_received')
         profil_view = request.form.get('profil_view')
         post_comment = request.form.get('post_comment')
 
@@ -177,7 +176,6 @@ def parameters():
                         'hideSocial': hidden_social,
                         'cmtDisable': comment_disable,
                         'friendRequest': friend_request,
-                        'msgReceived': msg_received,
                         'profilView': profil_view,
                         'postComment': post_comment
                     }

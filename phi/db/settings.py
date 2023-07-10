@@ -29,7 +29,6 @@ def settings_save(
         'hideSocial' : hideSocial,
         'cmtDisable' : cmtDisable,
         'friendRequest': friendRequest,
-        'msgReceived': msgReceived,
         'profilView': profilView,
         'postComment': postComment
     })

@@ -1,3 +1,44 @@
+$(document).ready(function() {
+    let socketio = io.connect('http://127.0.0.1:5000');
+    socketio.on('connect', () => {
+        joinRoom(room);
+    });
+
+    socketio.on('disconnect', () => {
+        leaveRoom(room);
+    })
+
+    socketio.on('message', data => {
+        $('#chatt').append(
+            '<li class="card container">\
+                <span class="card-title">\
+                   <span>' + data.username + ' - ' + data.tm + '</span>\
+                </span>\
+                <span>' + data.msg + '</span><br>\
+            </li>'
+        );
+    });
+
+    $('#btn').on('click', () => {
+        let entries = $('#entries').val();
+        if (entries.length) {
+            socketio.send({'msg': entries, 'username': username, 'room': room});
+        }
+        $('#entries').val('');
+        $('#entries').focus();
+    })
+
+    function leaveRoom(room) {
+        socketio.emit('leave', {'username': username, 'room': room});
+    }
+
+    function joinRoom(room) {
+        socketio.emit('join', {'username': username, 'room': room});
+    }
+
+});
+
+/*
 document.addEventListener('DOMContentLoaded', () => {
     let socket = io.connect('http://' + document.domain + ':' + location.port);
     socket.on('connect', () => {
@@ -51,3 +92,4 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#entries').append(p);
     }
 });
+*/
