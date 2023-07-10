@@ -5,7 +5,7 @@
 {% endblock %}
 <!---->
 {% block basebody %}
-<div class="col-lg-7">
+<div class="col-lg-8 container justify-content-center">
 
   <div class="card basic">
 
@@ -76,28 +76,4 @@
   {% endfor %}
   </div>
 </div>
-<div class="col-5">
-  <div class="card top-selling overflow-auto">
-
-    <div class="card-body pb-0">
-      <h5 class="card-title">friendship Request <span>| All days</span></h5>
-
-      <table class="table table-borderless">
-        <tbody>
-          {% for fp in friendme %}
-          <tr>
-            <th scope="row">
-              <a href="{{ url_for('profile.public', username=fp.username) }}" class="text-primary">
-                <img src="{{ url_for('profile.upload', filename=fp.img) }}" alt="img" class="rounded-circle" width="35em"> {{ fp.username }}
-              </a>
-            </th>
-            <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='accept') }}">accept</a></td>
-            <td><a href="{{ url_for('news.friendresp', sender_id=fp._id, resp='reject') }}">reject</a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div><!-- End Top Selling -->
 {% endblock %}

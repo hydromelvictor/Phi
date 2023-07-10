@@ -44,11 +44,13 @@ def chat(username):
                     if friend['_id'] == user['_id']:
                         room = chat
             break
-         
+    
+    from .news import friendme
     context = {
         'current_user': current_user,
         'friend': friend,
-        'room': room
+        'room': room,
+        'friendme': friendme(current_user._id)
     }
     return render_template('sms/sms.html', **context)
 
@@ -57,10 +59,28 @@ def chat(username):
 @authenticated_only
 def message(data):
     """ recieved message """
-    send({'msg': data['msg'], 'username': data['username'], 'tm': strftime('%b-%d %I:%M%p', localtime())}, room=data['room'])
+    room = data['room']
+    tm = strftime('%b-%d %I:%M%p', localtime())
+    chats.update_one(
+        room,
+        {
+            "$set": {
+                'publish': tm
+            },
+            "$push": {
+                'sms': {
+                    'msg': data['msg'],
+                    'tm': tm,
+                    'username': data['username']
+                }
+            }
+        }
+    )
+    send({'msg': data['msg'], 'username': data['username'], 'tm': tm}, room=data['room'])
 
 
 @socketio.on('join')
+@authenticated_only
 def join(data):
     """ join """
     join_room(data['room'])
@@ -68,6 +88,7 @@ def join(data):
     
 
 @socketio.on('leave')
+@authenticated_only
 def leave(data):
     """ leave """
     leave_room(data['room'])

@@ -319,7 +319,13 @@
           <span>All Users</span>
         </a>
       </li><!-- End Contact Page Nav -->
-    </ul>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{{ url_for('news.suggession', username=current_user.username) }}">
+          <i class="bi bi-people"></i>
+          <span>Friendship&nbsp;</span>
+          <span class="badge bg-primary badge-number">{{ friendme|length }}</span>
+        </a>
+      </li><!-- End Contact Page Nav -->
 
   </aside><!-- End Sidebar-->
 

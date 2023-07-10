@@ -8,7 +8,7 @@ from flask_login import login_required, current_user, logout_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import app
-from .const import states
+from .const import states, jobs
 from .db.comments import comments
 from .db.posts import posts
 from .db.users import get_user, users, myrooms
@@ -35,11 +35,16 @@ def overview(username):
     if current_user.username == username:
         params = settings.find_one({'person': current_user._id})
 
+    myjobs = sorted(list(set(jobs)))
+    from .news import friendme
+    
     context = {
         'current_user': current_user,
         'country': states,
+        'jobs': myjobs,
         'settings':params,
-        'rooms': rooms
+        'rooms': rooms,
+        'friendme': friendme(current_user._id)
     }
     return render_template('profil/update.html', **context)
 
@@ -289,21 +294,17 @@ def rm():
 def public(username):
     """ public profil """
     
-    friendme = []
-    for fd in request_friend_to_me(current_user._id):
-        user = users.find_one({'_id': fd['sender_id']})
-        friendme.append(user)
-    
     person = users.find_one({'username': username})
     params = settings.find_one({'person': person['_id']})
     
     friender = friends.find_one({'sender_id': current_user._id, 'friend_id': person['_id']})
     
+    from .news import friendme
     context = {
         'person': person,
         'setting': params,
         'friender': friender,
-        'friendme': friendme
+        'friendme': friendme(current_user._id)
     }
     return render_template('profil/view.html', **context)
 

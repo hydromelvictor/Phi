@@ -16,17 +16,20 @@ import pymongo
 news = Blueprint('news', __name__)
 
 
+def friendme(id):
+    friend = []
+    for fd in request_friend_to_me(current_user._id):
+        user = users.find_one({'_id': fd['sender_id']})
+        friend.append(user)
+    return friend
+
+
 @news.route('/', methods=['GET'], strict_slashes=False)
 @login_required
 def dash():
     """ news """
-        
-    friendme = []
-    for fd in request_friend_to_me(current_user._id):
-        user = users.find_one({'_id': fd['sender_id']})
-        friendme.append(user)
-    
     allposts = posts.find().sort('publish', pymongo.DESCENDING)
+    
     news = []
     for post in allposts:
         author = post_sender(post['author'])
@@ -42,9 +45,67 @@ def dash():
     context = {
         'news': news,
         'current_user': current_user,
-        'friendme': friendme
+        'friendme': friendme(current_user._id)
     }
     return render_template('news.html', **context)
+
+
+@news.route('/<username>/friendship', methods=['GET'], strict_slashes=False)
+def suggession(username):
+    """ freind suggestion and firend request """
+
+    # friend suggession
+    sugg = []
+    for pers in list(users.find()):
+        
+        if pers['_id'] != current_user._id:
+            found = False
+            for fd in current_user.friends:
+                if pers['_id'] == fd['_id']:
+                    found == True
+                    break
+                
+            for fd in list(friends.find()):
+                if pers['_id'] in (fd['sender_id'], fd['friend_id']):
+                    found == True
+                    break
+                
+            pertinant = 0
+            if not found:
+                n = 0
+
+                # same friends
+                for member in zip(current_user.friends, pers['friends']):
+                    if pers['_id'] in (member[0]['_id'], member[1]['_id']):
+                        n += 1
+                pertinant += 1 if n >= 4 else 0
+
+                obbies = [ i.lower().strip() for i in list(set(current_user.obbies.split(',')))]
+                obbies.extend([j.lower().strip() for j in list(set(pers['obbies'].split(',')))])            
+
+                n1 = len(obbies)
+                n2 = len(set(obbies))
+
+                # same obbies
+                pertinant += 1 if n1 != n2 else 0
+                # same job
+                pertinant += 1 if current_user.job == pers['job'] else 0
+                # same professional status
+                pertinant += 1 if current_user.status.lower() == pers['status'].lower() else 0
+                # same city
+                pertinant += 1 if current_user.city.lower() == pers['city'].lower() else 0
+                # same country
+                pertinant += 1 if current_user.country == pers['country'] else 0
+
+            if pertinant >= 4:
+                sugg.append(pers)
+        
+    context = {
+        'friendme': friendme(current_user._id),
+        'sugg': sugg,
+    }
+    
+    return render_template('profil/friendship.html', **context)
 
 
 @news.route('/<username>/newpost', methods=['GET'], strict_slashes=False)
@@ -52,7 +113,8 @@ def dash():
 def post(username):
     """ new post """
     context = {
-        'current_user': current_user
+        'current_user': current_user,
+        'friendme': friendme(current_user._id)
     }
     return render_template('post/post.html', **context)
 
@@ -92,7 +154,8 @@ def alls(username):
 
     context = {
         'my_posts': my_posts,
-        'current_user': current_user
+        'current_user': current_user,
+        'friendme': friendme(current_user._id)
     }
     return render_template('post/all.html', **context)
 
@@ -103,7 +166,8 @@ def all_users():
     """ users """
     context = {
         'current_user': current_user,
-        'all_users': persons()
+        'all_users': persons(),
+        'friendme': friendme(current_user._id)
     }
     return render_template('users.html', **context)
 
