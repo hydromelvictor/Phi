@@ -62,9 +62,6 @@ myterminal:$ cd Phi
 myterminal:$ python3 -r requirement.txt
 
 # launch
-
-myterminal:$ flask run
-============ or ===============
 myterminal:$ python3 wsgi
 ```
 
@@ -74,10 +71,7 @@ myterminal:$ python3 wsgi
 ```
 python -r requirement.txt
 
-#launch
-
-myterminal:$ flask run
-============ or ===============
+# launch
 myterminal:$ python -m wsgi
 ```
 

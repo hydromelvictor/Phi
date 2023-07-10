@@ -56,7 +56,7 @@ def suggession(username):
 
     # friend suggession
     sugg = []
-    for pers in list(users.find()):
+    for pers in users.find():
         
         if pers['_id'] != current_user._id:
             found = False
@@ -64,18 +64,35 @@ def suggession(username):
                 if pers['_id'] == fd['_id']:
                     found == True
                     break
+            
+            if found:
+                found = False
+                continue
                 
-            for fd in list(friends.find()):
-                if pers['_id'] in (fd['sender_id'], fd['friend_id']):
+            for fd in zip(friends.find({'sender_id': current_user._id}), friends.find({'friend_id': current_user._id})):
+                if pers['_id'] in (fd[0]['friend_id'], fd[1]['sender_id']):
                     found == True
                     break
-                
-            pertinant = 0
+            
+            if found:
+                continue
+            
             if not found:
                 n = 0
-
-                # same friends
-                for member in zip(current_user.friends, pers['friends']):
+                pertinant = 0
+                # same friends of their friends
+                
+                # their friends me
+                me = []
+                for fd in current_user.friends:
+                    me.extend(fd['friends'])
+                
+                # their friends you
+                you = []
+                for fd in pers['friends']:
+                    you.extend(fd['friends'])
+                
+                for member in zip(set(me), set(you)):
                     if pers['_id'] in (member[0]['_id'], member[1]['_id']):
                         n += 1
                 pertinant += 1 if n >= 4 else 0
@@ -97,8 +114,8 @@ def suggession(username):
                 # same country
                 pertinant += 1 if current_user.country == pers['country'] else 0
 
-            if pertinant >= 4:
-                sugg.append(pers)
+                if pertinant >= 4:
+                    sugg.append(pers)
         
     context = {
         'friendme': friendme(current_user._id),
