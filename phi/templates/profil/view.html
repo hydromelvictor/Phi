@@ -128,16 +128,16 @@
     </div>
 
     <!-- ok good -->
-    {% if setting.friendRequest != 'noperson' %}
     {% if person._id != current_user._id %}
-    {% if current_user._id is friendEqTo(person.friends) %}
-    {% elif setting.friendRequest == 'friendof'  and not (current_user._id is globalFriendEqTo(person.friends)) %}
-    {% elif not current_user.id is friendEqTo(friendme) %}
+    {% if not (current_user._id is friendEqTo(person.friends)) %}
+    {% if setting.friendRequest != 'noperson' %}
+    {% if setting.friendRequest == 'friendof' and current_user._id is globalFriendEqTo(person.friends) %}
     {% else %}
     <form action="/sendfriends" method="post" class="col-lg-8 col-md-4 ml-4 container">
       <input type="text" value="{{ person.username }}" name="username" hidden>
       <button class="btn btn-primary">send a friend request</button>
     </form><br>
+    {% endif %}
     {% endif %}
     {% endif %}
     {% endif %}

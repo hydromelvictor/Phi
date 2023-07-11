@@ -16,12 +16,28 @@ import pymongo
 news = Blueprint('news', __name__)
 
 
-def friendme(id):
+def friendme(sid):
     friend = []
-    for fd in request_friend_to_me(current_user._id):
+    for fd in request_friend_to_me(sid):
         user = users.find_one({'_id': fd['sender_id']})
         friend.append(user)
     return friend
+
+
+# def request_friendship(sid):
+#     sender = []
+    
+#     for i in list(friends.find({'sender_id': sid})):
+#         user = users.find_one({'_id': i['friend_id']})
+#         sender.append(user)
+    
+#     for j in list(friends.find({'friend_id': sid})):
+#         user = users.find_one({'_id': j['sender_id']})
+#         sender.append(user)
+    
+#     return sender
+        
+                
 
 
 @news.route('/', methods=['GET'], strict_slashes=False)
@@ -92,7 +108,7 @@ def suggession(username):
                 for fd in pers['friends']:
                     you.extend(fd['friends'])
                 
-                for member in zip(set(me), set(you)):
+                for member in zip(me, you):
                     if pers['_id'] in (member[0]['_id'], member[1]['_id']):
                         n += 1
                 pertinant += 1 if n >= 4 else 0
