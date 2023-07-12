@@ -2,7 +2,8 @@
 """ database """
 from pymongo import MongoClient
 
-Client = MongoClient('mongodb://localhost:27017')
+Client = MongoClient('mongodb+srv://hydromel:BhVMi8qg5rTgulgb@phibase.ns8wecs.mongodb.net/?retryWrites=true&w=majority')
+
 db = Client.Phibase
 
 users = db.users
