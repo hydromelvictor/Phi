@@ -197,7 +197,6 @@ def parameters():
                 hideSocial=hidden_social,
                 cmtDisable=comment_disable,
                 friendRequest=friend_request,
-                msgReceived=msg_received,
                 profilView=profil_view
             )
     
