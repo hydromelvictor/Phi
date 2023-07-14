@@ -37,7 +37,7 @@ def chat(username):
                 for user in rm['users']:
                     if frd['_id'] == user['_id']:
                         room = rm
-    
+
     from .news import friendme
     context = {
         'current_user': current_user,

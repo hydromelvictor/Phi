@@ -32,22 +32,6 @@ def friendbyme(sid):
     return friend
 
 
-# def request_friendship(sid):
-#     sender = []
-    
-#     for i in list(friends.find({'sender_id': sid})):
-#         user = users.find_one({'_id': i['friend_id']})
-#         sender.append(user)
-    
-#     for j in list(friends.find({'friend_id': sid})):
-#         user = users.find_one({'_id': j['sender_id']})
-#         sender.append(user)
-    
-#     return sender
-        
-                
-
-
 @news.route('/', methods=['GET'], strict_slashes=False)
 @login_required
 def dash():
@@ -157,7 +141,7 @@ def newpost():
         if len(contains) != 0 and contains != '':
             post_save(author=current_user._id, contains=contains)
             return redirect(url_for('news.dash'))
-    return render_template('post/post.html')
+    return redirect(url_for('news.post', username=current_user.username))
 
 
 @news.route('/comment', methods=['GET', 'POST'], strict_slashes=False)
@@ -170,7 +154,7 @@ def new_comments():
         
         save_cmts(author=current_user._id, postref=postref, contains=contains)
         return redirect(url_for('news.dash'))
-    return render_template('news.html')
+    return redirect(url_for('news.dash'))
 
 
 @news.route('/<username>/posts', methods=['GET'], strict_slashes=False)
@@ -229,4 +213,4 @@ def friendresp(sender_id, resp):
         
         friends.delete_one({'sender_id': sender_id, 'friend_id': current_user._id})
         return redirect(url_for('news.dash'))
-    return render_template('news.html')
+    return render_template('profil/friendship.html')

@@ -243,42 +243,46 @@ def rm():
             for cmtme in list(comments.find()):
                 if cmtme['author'] == current_user._id:
                     comments.delete_one({'_id': cmtme['_id']})
-            
+
             # delete all friends request for me and by me
             for req in list(friends.find()):
                 if current_user._id == req['sender_id']:
                     friends.delete_one({'_id': req['_id']})
-                
+
                 if current_user._id == req['friend_id']:
                     friends.delete_one({'_id': req['_id']})
-            
+
             # delete all comments for my posts and delete all my posts
             for postme in list(posts.find()):
                 if postme['author'] == current_user._id:
                     allcmts = comments.find({'postref': postme['_id']})
-                    
+
                     for cmt in allcmts:
                         comments.delete_one({'_id': cmt['_id']})
-                    
+
                     posts.delete_one({'_id': postme['_id']})
-            
+
             # delete my settings configuration
             settings.delete_one({'person': current_user._id})
-            
+
             # remove me in the all friends of users
             for friend in current_user.friends:
-                for me in friend['friends']:
-                    if me['_id'] == current_user._id:
-                        friend['friends'].remove(me)
-            
+                users.update_one(
+                    friend,
+                        {
+                            "$pull": {'friends': {'_id': current_user._id}}
+                        }
+                    )
+
             # delete all chat with users
             for chatme in list(chats.find()):
                 for user in chatme['users']:
                     if user['_id'] == current_user._id:
                         chats.delete_one({'_id': chatme['_id']})
-            
+
             # delete my profile picture
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], current_user.img))
+            if current_user.img != 'nouser.png':
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], current_user.img))
             # delete me
             users.delete_one({'_id': current_user._id})
             
@@ -298,14 +302,13 @@ def public(username):
     
     from .news import friendme, friendbyme
     # from .news import request_friendship
-    
+
     context = {
         'person': person,
         'setting': params,
         'friender': friender,
         'friendme': friendme(current_user._id),
         'friendbyme': friendbyme(current_user._id)
-        # 'more': request_friendship(current_user._id)
     }
     return render_template('profil/view.html', **context)
 
