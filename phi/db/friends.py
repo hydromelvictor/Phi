@@ -24,3 +24,6 @@ def friend_request(sender_id, friend_id, resp=False):
 def request_friend_to_me(user_id):
     """ my wait friend """
     return list(friends.find({'friend_id': user_id}))
+
+def request_friend_by_me(user_id):
+    return list(friends.find({'sender_id': user_id}))

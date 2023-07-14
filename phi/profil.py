@@ -296,7 +296,7 @@ def public(username):
     
     friender = friends.find_one({'sender_id': current_user._id, 'friend_id': person['_id']})
     
-    from .news import friendme
+    from .news import friendme, friendbyme
     # from .news import request_friendship
     
     context = {
@@ -304,6 +304,7 @@ def public(username):
         'setting': params,
         'friender': friender,
         'friendme': friendme(current_user._id),
+        'friendbyme': friendbyme(current_user._id)
         # 'more': request_friendship(current_user._id)
     }
     return render_template('profil/view.html', **context)

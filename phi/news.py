@@ -7,7 +7,7 @@ from .db.settings import settings
 from .db.posts import post_cmts, post_save, posts
 from .db.users import post_sender, persons, users, myrooms
 from .db.comments import save_cmts
-from .db.friends import request_friend_to_me, friends
+from .db.friends import request_friend_to_me, request_friend_by_me, friends
 from .db.chats import chats, chats_save
 
 from datetime import datetime
@@ -15,11 +15,19 @@ import pymongo
 
 news = Blueprint('news', __name__)
 
-
+# --- ok good ---
 def friendme(sid):
     friend = []
     for fd in request_friend_to_me(sid):
         user = users.find_one({'_id': fd['sender_id']})
+        friend.append(user)
+    return friend
+
+
+def friendbyme(sid):
+    friend = []
+    for fd in request_friend_by_me(sid):
+        user = users.find_one({'_id': fd['friend_id']})
         friend.append(user)
     return friend
 
@@ -72,67 +80,55 @@ def suggession(username):
 
     # friend suggession
     sugg = []
+    
+    frds = []
+    for fd in current_user.friends:
+        frds.append(fd['_id'])
+    
+    for fd in friendme(current_user._id):
+        frds.append(fd['_id'])
+        
+    for fd in friendbyme(current_user._id):
+        frds.append(fd['_id'])
+    
     for pers in users.find():
         
         if pers['_id'] != current_user._id:
-            found = False
-            for fd in current_user.friends:
-                if pers['_id'] == fd['_id']:
-                    found == True
-                    break
             
-            if found:
-                found = False
-                continue
+            if pers['_id'] not in frds:
                 
-            for fd in zip(friends.find({'sender_id': current_user._id}), friends.find({'friend_id': current_user._id})):
-                if pers['_id'] in (fd[0]['friend_id'], fd[1]['sender_id']):
-                    found == True
-                    break
-            
-            if found:
-                continue
-            
-            if not found:
-                n = 0
                 pertinant = 0
-                # same friends of their friends
+                if pers['country'] == current_user.country:
+                    pertinant += 1
                 
-                # their friends me
-                me = []
-                for fd in current_user.friends:
-                    me.extend(fd['friends'])
+                if pers['city'] == current_user.city:
+                    pertinant += 1
+                    
+                if pers['job'] == current_user.job:
+                    pertinant += 1
+                    
+                if pers['status'] == current_user.status:
+                    pertinant += 1
+                    
+                if pers['company'] == current_user.company:
+                    pertinant += 1
+                    
+                for i in pers['obbies'].split(','):
+                    j = 0
+                    if i.strip() in [h.strip() for h in current_user.obbies.split(',')]:
+                        j += 1
+                    if j == 4:
+                        pertinant += 1
+                        break
                 
-                # their friends you
-                you = []
                 for fd in pers['friends']:
-                    you.extend(fd['friends'])
-                
-                for member in zip(me, you):
-                    if pers['_id'] in (member[0]['_id'], member[1]['_id']):
-                        n += 1
-                pertinant += 1 if n >= 4 else 0
-
-                obbies = [ i.lower().strip() for i in list(set(current_user.obbies.split(',')))]
-                obbies.extend([j.lower().strip() for j in list(set(pers['obbies'].split(',')))])            
-
-                n1 = len(obbies)
-                n2 = len(set(obbies))
-
-                # same obbies
-                pertinant += 1 if n1 != n2 else 0
-                # same job
-                pertinant += 1 if current_user.job == pers['job'] else 0
-                # same professional status
-                pertinant += 1 if current_user.status.lower() == pers['status'].lower() else 0
-                # same city
-                pertinant += 1 if current_user.city.lower() == pers['city'].lower() else 0
-                # same country
-                pertinant += 1 if current_user.country == pers['country'] else 0
+                    for dd in current_user.friends:
+                        if fd['_id'] == dd['_id']:
+                            pertinant += 1
 
                 if pertinant >= 4:
                     sugg.append(pers)
-        
+
     context = {
         'friendme': friendme(current_user._id),
         'sugg': sugg,
